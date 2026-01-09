@@ -1,0 +1,379 @@
+{
+  "subject": "Biology",
+  "curriculum": "Competency Based Curriculum (CBC)",
+  "country": "Kenya",
+  "level": "Senior Secondary",
+  "strands": [
+    {
+      "id": 1,
+      "name": "Cell Biology and Biodiversity",
+      "code": "1.0",
+      "sub_strands": [
+        {
+          "id": "1.1",
+          "name": "Introduction to Biology",
+          "topics": [
+            "Application of Biology",
+            "Fields of study and careers related to Biology"
+          ],
+          "specific_learning_outcomes": [
+            "Explain the application of Biology in everyday life",
+            "Relate fields of study in Biology to career opportunities",
+            "Illustrate the careers related to fields of study in Biology",
+            "Appreciate the importance of Biology in everyday life"
+          ],
+          "key_inquiry_questions": [
+            "Why is it important to study Biology?"
+          ],
+          "suggested_learning_experiences": [
+            "Search for information on the meaning and application of Biology in everyday life and share with peers",
+            "Collaboratively search for information from print and non-print media on fields of study in Biology and relate them to career opportunities",
+            "Use locally available materials to design a career wheel to relate fields of study in Biology to careers and make presentations",
+            "Discuss the factors that influence career choices (interest, ability)"
+          ],
+          "core_competencies": [
+            "Imagination and Creativity: Visualises prospective fields and careers using flashcards and career wheels",
+            "Self-efficacy: Develops self-awareness discussing factors influencing career choices"
+          ],
+          "values": [
+            "Respect: Appreciates diverse opinions during discussions",
+            "Responsibility: Searches for information from safe sources"
+          ],
+          "key_concepts": "Biology has wide applications in everyday life and offers diverse career opportunities in various fields of study."
+        },
+        {
+          "id": "1.2",
+          "name": "Specimen Collection and Preservation",
+          "topics": [
+            "Apparatus for collecting specimens",
+            "Specimens collecting, processing and preserving",
+            "Project on collecting, processing and preserving biological specimens"
+          ],
+          "specific_learning_outcomes": [
+            "Identify apparatus and materials used for collecting, processing and preserving specimens",
+            "Collect, process, and preserve specimens for biological studies using improvised and conventional apparatus",
+            "Appreciate the importance of collecting, processing, and preserving specimens in Biology"
+          ],
+          "key_inquiry_questions": [
+            "How are specimens collected and preserved?"
+          ],
+          "suggested_learning_experiences": [
+            "Search for information on apparatus and materials for collecting specimens",
+            "Improvise apparatus from locally available materials for collecting, processing, and preserving specimens",
+            "Observe designated road crossing points while collecting specimens",
+            "Make a herbarium to preserve specimens",
+            "Carry out a project documenting specimen collection and preservation"
+          ],
+          "core_competencies": [
+            "Critical Thinking and Problem Solving: Improvises apparatus to address shortages",
+            "Self-efficacy: Gains confidence while collecting, processing, and preserving specimens"
+          ],
+          "values": [
+            "Unity: Collaborates with peers during collection activities",
+            "Integrity: Enhances honesty during the project"
+          ],
+          "key_concepts": "Proper collection, processing, and preservation of specimens is essential for accurate biological studies and research."
+        },
+        {
+          "id": "1.3",
+          "name": "Cell Structure and Specialisation",
+          "topics": [
+            "Preparation of slides for observation under a microscope",
+            "Estimation of cell size during microscopy",
+            "Differences between light and electron microscope",
+            "Cell structure observed under electron microscope",
+            "Differences between plant and animal cells",
+            "Specialised cells in plants and animals (adaptations to their functions)",
+            "Cell organisation (organelles, cells, tissues, organs, organ systems)"
+          ],
+          "specific_learning_outcomes": [
+            "Differentiate between light and electron microscope as used in studying cell structure",
+            "Prepare temporary slides and estimate cell size using light microscope",
+            "Describe structure and functions of plant and animal cells under electron microscope",
+            "Relate the structures of specialised cells to their functions",
+            "Appreciate the cell as the basic unit of life"
+          ],
+          "key_inquiry_questions": [
+            "Why do plant and animal cells differ?",
+            "How are cells specialised?"
+          ],
+          "suggested_learning_experiences": [
+            "Carry out experiments on preparation of specimen slides",
+            "Observe and draw plant and animal cells",
+            "Use photomicrographs/charts to compare structures",
+            "Model the structure of cells and observe specialised cells",
+            "Discuss levels of organisation in organisms"
+          ],
+          "core_competencies": [
+            "Communication and Collaboration: Cooperates in groups comparing cell structures",
+            "Digital Literacy: Gains digital literacy researching microscopes"
+          ],
+          "values": [
+            "Respect: Demonstrates tolerance during discussions",
+            "Responsibility: Searches for reliable information"
+          ],
+          "key_concepts": "The cell is the basic unit of life. Plant and animal cells have different structures adapted to their functions. Cells are organised into tissues, organs, and organ systems."
+        },
+        {
+          "id": "1.4",
+          "name": "Chemicals of Life",
+          "topics": [
+            "Composition, properties and functions of chemicals of life (Carbohydrates, Lipids, Proteins, Vitamins)",
+            "Enzymes (meaning, factors affecting activity)",
+            "Functions of water and mineral salts"
+          ],
+          "specific_learning_outcomes": [
+            "Describe the composition, properties, and functions of chemicals of life",
+            "Investigate the presence of carbohydrates, lipids, proteins, and vitamin C in food substances",
+            "Investigate the presence of enzymes in living tissues",
+            "Determine factors affecting enzymatic reactions",
+            "Appreciate the importance of chemical components in cells"
+          ],
+          "key_inquiry_questions": [
+            "How are chemicals important in cells?",
+            "How is the presence of chemicals of life determined?"
+          ],
+          "suggested_learning_experiences": [
+            "Search and discuss information on chemical components in cells",
+            "Carry out experiments to test for carbohydrates, lipids, proteins, and vitamin C",
+            "Investigate presence of catalase enzymes in tissues",
+            "Determine factors affecting enzyme activity and discuss results",
+            "Examine packaging labels to evaluate chemical content in food"
+          ],
+          "core_competencies": [
+            "Critical Thinking and Problem Solving: Analyses experiments and draws inferences",
+            "Learning to Learn: Evaluates packaging labels of food products"
+          ],
+          "values": [
+            "Love: Shares resources and ideas during experiments",
+            "Unity: Collaborates with others during investigations"
+          ],
+          "key_concepts": "Chemicals of life (carbohydrates, lipids, proteins, vitamins, water, mineral salts) have specific compositions, properties, and functions essential for life. Enzymes are biological catalysts whose activity is affected by various factors."
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Anatomy and Physiology of Plants",
+      "code": "2.0",
+      "sub_strands": [
+        {
+          "id": "2.1",
+          "name": "Nutrition",
+          "topics": [
+            "Types of nutrition in plants",
+            "Structure of chloroplast",
+            "Process of photosynthesis"
+          ],
+          "specific_learning_outcomes": [
+            "Describe types of nutrition in plants",
+            "Relate structure of chloroplast to function",
+            "Illustrate light and dark stages of photosynthesis",
+            "Appreciate significance of photosynthesis in nature"
+          ],
+          "key_inquiry_questions": [
+            "How do plants obtain food?"
+          ],
+          "suggested_learning_experiences": [
+            "Search for information on plant nutrition and share with peers",
+            "Discuss chloroplast structure and function",
+            "Watch videos/animations of photosynthesis and discuss",
+            "Discuss reactions during light and dark stages using illustrations"
+          ],
+          "core_competencies": [
+            "Self-Efficacy: Performs tasks using illustrations",
+            "Digital Literacy: Uses digital devices for research"
+          ],
+          "values": [
+            "Unity: Cooperates with peers",
+            "Respect: Shows patience listening to peers"
+          ],
+          "key_concepts": "Plants obtain food through photosynthesis, which occurs in chloroplasts. The process involves light and dark stages with specific biochemical reactions."
+        },
+        {
+          "id": "2.2",
+          "name": "Transport",
+          "topics": [
+            "Transport system in plants",
+            "Vascular tissues in monocots and dicots",
+            "Uptake of water and mineral salts",
+            "Transpiration",
+            "Translocation of manufactured food"
+          ],
+          "specific_learning_outcomes": [
+            "Relate structures to functions in transport",
+            "Illustrate vascular arrangement in monocots and dicots",
+            "Demonstrate water and mineral uptake",
+            "Demonstrate factors affecting transpiration",
+            "Describe translocation of food",
+            "Appreciate significance of transport"
+          ],
+          "key_inquiry_questions": [
+            "How are materials transported in plants?"
+          ],
+          "suggested_learning_experiences": [
+            "Observe plant structures using microscope",
+            "Carry out experiments on water uptake and transpiration",
+            "Demonstrate translocation using safe experiments"
+          ],
+          "core_competencies": [
+            "Critical Thinking and Problem Solving: Analyse experimental results",
+            "Imagination and Creativity: Seeks clarification during experiments"
+          ],
+          "values": [
+            "Responsibility: Takes care of plants during experiments",
+            "Integrity: Honest in reporting results"
+          ],
+          "key_concepts": "Plants have specialized vascular tissues (xylem and phloem) for transporting water, minerals, and manufactured food. Transpiration and translocation are key transport processes."
+        },
+        {
+          "id": "2.3",
+          "name": "Gaseous Exchange and Respiration",
+          "topics": [
+            "Structure, adaptations and functions of gaseous exchange sites",
+            "Mechanism of opening and closing of stomata",
+            "Types of respiration",
+            "Applications of anaerobic respiration"
+          ],
+          "specific_learning_outcomes": [
+            "Relate structure of gaseous exchange sites to function",
+            "Describe stomata mechanism",
+            "Investigate aerobic and anaerobic respiration",
+            "Explain economic importance of anaerobic respiration",
+            "Appreciate significance of gaseous exchange and respiration"
+          ],
+          "key_inquiry_questions": [
+            "Why is gaseous exchange important to plants?",
+            "How is respiration useful to plants?"
+          ],
+          "suggested_learning_experiences": [
+            "Observe and discuss adaptations of gaseous exchange sites",
+            "Carry out experiments on aerobic and anaerobic respiration",
+            "Perform fermentation project using locally available materials"
+          ],
+          "core_competencies": [
+            "Communication and Collaboration: Cooperates in group discussions",
+            "Learning to Learn: Applies acquired knowledge in projects"
+          ],
+          "values": [
+            "Responsibility: Disposes experimental products properly",
+            "Social justice: Ensures fairness in group activities"
+          ],
+          "key_concepts": "Plants exchange gases through specialized structures. They carry out aerobic and anaerobic respiration to release energy. Anaerobic respiration has economic applications."
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Anatomy and Physiology of Animals",
+      "code": "3.0",
+      "sub_strands": [
+        {
+          "id": "3.1",
+          "name": "Nutrition",
+          "topics": [
+            "Mouthparts of insects",
+            "Beaks of birds"
+          ],
+          "specific_learning_outcomes": [
+            "Relate structure of mouthparts and beaks to feeding functions",
+            "Illustrate mouthparts in different insects",
+            "Appreciate diversity in feeding modes"
+          ],
+          "key_inquiry_questions": [
+            "How do insects and birds feed?"
+          ],
+          "suggested_learning_experiences": [
+            "Observe insect mouthparts under microscope and discuss",
+            "Watch animations/videos on feeding adaptations"
+          ],
+          "core_competencies": [
+            "Communication and Collaboration: Cooperates during observations",
+            "Digital Literacy: Uses digital devices for research"
+          ],
+          "values": [
+            "Responsibility: Observes safety precautions",
+            "Social Justice: Ensures equity in group activities"
+          ],
+          "key_concepts": "Different animals have specialized feeding structures adapted to their diet and feeding habits. Insects have diverse mouthparts and birds have various beak types suited to their feeding modes."
+        },
+        {
+          "id": "3.2",
+          "name": "Transport",
+          "topics": [
+            "Significance of transport in animals",
+            "Transport systems in insects, fish, amphibians, reptiles, mammals",
+            "Types of circulatory systems",
+            "Pumping mechanism of the mammalian heart",
+            "Human lymphatic and immune systems",
+            "Blood clotting mechanism",
+            "ABO and Rhesus blood groups"
+          ],
+          "specific_learning_outcomes": [
+            "Explain importance of transport in animals",
+            "Illustrate animal transport systems",
+            "Describe mammalian heart pumping mechanism",
+            "Explain blood clotting and blood groups",
+            "Appreciate diversity of transport systems"
+          ],
+          "key_inquiry_questions": [
+            "Why is transport important in animals?",
+            "How do transport systems differ?"
+          ],
+          "suggested_learning_experiences": [
+            "Research animal transport systems",
+            "Dissect and observe transport systems safely",
+            "Illustrate and share findings with peers"
+          ],
+          "core_competencies": [
+            "Critical Thinking and Problem Solving: Analyses compatibility of blood donors",
+            "Self-efficacy: Gains confidence during dissections"
+          ],
+          "values": [
+            "Love: Respects peers during research",
+            "Peace: Demonstrates tolerance during dissections"
+          ],
+          "key_concepts": "Animals have different transport systems adapted to their complexity and environment. The mammalian circulatory system includes heart, blood vessels, and blood with specific mechanisms for pumping, clotting, and immune response."
+        },
+        {
+          "id": "3.3",
+          "name": "Gaseous Exchange and Respiration",
+          "topics": [
+            "Respiratory surfaces in animals",
+            "Aerobic and anaerobic respiration",
+            "Oxygen debt",
+            "Factors affecting energy requirement",
+            "Respiratory substrates and determination of respiratory quotient",
+            "Investigating factors affecting rate of respiration"
+          ],
+          "specific_learning_outcomes": [
+            "Explain characteristics of respiratory surfaces",
+            "Describe adaptations of respiratory structures",
+            "Describe gaseous exchange mechanism",
+            "Describe aerobic and anaerobic respiration",
+            "Calculate respiratory quotient",
+            "Appreciate importance of gaseous exchange and respiration"
+          ],
+          "key_inquiry_questions": [
+            "How does gaseous exchange occur in animals?",
+            "Why is respiration important to animals?"
+          ],
+          "suggested_learning_experiences": [
+            "Observe and discuss respiratory structures in various animals",
+            "Carry out experiments on respiration and energy requirement",
+            "Construct models demonstrating gaseous exchange"
+          ],
+          "core_competencies": [
+            "Communication and Collaboration: Shares information during group activities",
+            "Learning to Learn: Develops relationships while working in groups"
+          ],
+          "values": [
+            "Respect: Considerate of others' opinions",
+            "Responsibility: Engages in assigned roles"
+          ],
+          "key_concepts": "Animals have specialized respiratory surfaces for gaseous exchange. Respiration releases energy through aerobic and anaerobic pathways. The respiratory quotient varies depending on the substrate used."
+        }
+      ]
+    }
+  ]
+}
