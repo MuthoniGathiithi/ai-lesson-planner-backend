@@ -13,15 +13,20 @@ load_dotenv()
 # Initialize FastAPI
 app = FastAPI(title="CBC Lesson Plan Generator", version="1.0")
 # Enable CORS
+from fastapi.middleware.cors import CORSMiddleware
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-    "*"  # Allow all for now - we'll restrict this later
-],
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "https://ai-lesson-planner-beta.vercel.app/",  # ← your Vercel URL
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # Initialize OpenAI
