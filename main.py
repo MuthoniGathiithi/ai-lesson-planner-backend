@@ -12,21 +12,30 @@ load_dotenv()
 
 # Initialize FastAPI
 app = FastAPI(title="CBC Lesson Plan Generator", version="1.0")
-# Enable CORS
-from fastapi.middleware.cors import CORSMiddleware
+
+# ============== CORS CONFIGURATION ==============
+# Allow all origins from Vercel (or specify your exact domain)
+origins = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "https://ai-lesson-planner-beta.vercel.app",
+    "https://*.vercel.app",  # Allow all Vercel preview deployments
+]
+
+# Get FRONTEND_URL from environment variable if set
+frontend_url = os.getenv("FRONTEND_URL")
+if frontend_url:
+    origins.append(frontend_url)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-        "https://ai-lesson-planner-beta.vercel.app/",  # ← your Vercel URL
-    ],
+    allow_origins=["*"],  # For debugging - allows ALL origins (change to origins list for production)
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["*"],
 )
 
 # Initialize OpenAI
@@ -55,7 +64,6 @@ def load_lesson_template():
         with open('lesson_plan_template.json', 'r', encoding='utf-8') as f:
             return json.load(f)
     except FileNotFoundError:
-        # Return default template if file doesn't exist
         return {
             "lessonPlan": {
                 "administrativeDetails": {},
@@ -90,9 +98,7 @@ def load_curriculum(subject: str):
 
 # Extract curriculum content for specific strand and sub-strand
 def extract_curriculum_content(curriculum, strand_name, sub_strand_name):
-    """
-    Find and extract specific curriculum content
-    """
+    """Find and extract specific curriculum content"""
     for strand in curriculum.get("strands", []):
         if strand_name.lower() in strand.get("name", "").lower():
             for sub_strand in strand.get("sub_strands", []):
@@ -109,7 +115,6 @@ def extract_curriculum_content(curriculum, strand_name, sub_strand_name):
                         "values": sub_strand.get("values", [])
                     }
     
-    # If not found, return empty structure
     return {
         "strand": strand_name,
         "sub_strand": sub_strand_name,
@@ -124,11 +129,9 @@ def extract_curriculum_content(curriculum, strand_name, sub_strand_name):
 
 # Generate lesson plan
 def generate_lesson_plan(request: LessonPlanRequest):
-    # Load template and curriculum
     template = load_lesson_template()
     curriculum = load_curriculum(request.subject)
     
-    # Extract relevant content
     curriculum_content = extract_curriculum_content(
         curriculum,
         request.strand,
@@ -137,12 +140,10 @@ def generate_lesson_plan(request: LessonPlanRequest):
     
     total_students = request.boys + request.girls
     
-    # Format curriculum content for the prompt
-    topics_str = "\n- " + "\n- ".join(curriculum_content["topics"])
-    outcomes_str = "\n- " + "\n- ".join(curriculum_content["learning_outcomes"])
-    experiences_str = "\n- " + "\n- ".join(curriculum_content["suggested_experiences"][:3])
+    topics_str = "\n- " + "\n- ".join(curriculum_content["topics"]) if curriculum_content["topics"] else "None specified"
+    outcomes_str = "\n- " + "\n- ".join(curriculum_content["learning_outcomes"]) if curriculum_content["learning_outcomes"] else "None specified"
+    experiences_str = "\n- " + "\n- ".join(curriculum_content["suggested_experiences"][:3]) if curriculum_content["suggested_experiences"] else "None specified"
     
-    # Create the prompt
     prompt = f"""
 You are an expert {request.subject} teacher in Kenya creating a CBC-aligned lesson plan.
 
@@ -204,7 +205,7 @@ Return ONLY valid JSON matching the template structure exactly. No additional te
 
     try:
         response = client.chat.completions.create(
-            model="gpt-4o",  # Use gpt-4o-mini for faster/cheaper option
+            model="gpt-4o",
             messages=[
                 {
                     "role": "system",
@@ -233,6 +234,7 @@ def read_root():
         "message": "CBC Lesson Plan Generator API",
         "status": "running",
         "version": "1.0",
+        "cors_enabled": True,
         "endpoints": {
             "health": "/health",
             "generate": "/generate-lesson-plan",
@@ -243,9 +245,7 @@ def read_root():
 
 @app.post("/generate-lesson-plan")
 async def create_lesson_plan(request: LessonPlanRequest):
-    """
-    Generate a CBC-aligned lesson plan based on curriculum content
-    """
+    """Generate a CBC-aligned lesson plan based on curriculum content"""
     try:
         lesson_plan = generate_lesson_plan(request)
         return {
@@ -260,9 +260,7 @@ async def create_lesson_plan(request: LessonPlanRequest):
 
 @app.get("/strands/{subject}")
 def get_strands(subject: str):
-    """
-    Get all available strands for a subject
-    """
+    """Get all available strands for a subject"""
     try:
         curriculum = load_curriculum(subject)
         strands = [
@@ -283,9 +281,7 @@ def get_strands(subject: str):
 
 @app.get("/sub-strands/{subject}/{strand}")
 def get_sub_strands(subject: str, strand: str):
-    """
-    Get sub-strands for a specific strand
-    """
+    """Get sub-strands for a specific strand"""
     try:
         curriculum = load_curriculum(subject)
         
@@ -314,9 +310,7 @@ def get_sub_strands(subject: str, strand: str):
 
 @app.get("/curriculum/{subject}")
 def get_full_curriculum(subject: str):
-    """
-    Get the complete curriculum for a subject
-    """
+    """Get the complete curriculum for a subject"""
     try:
         curriculum = load_curriculum(subject)
         return {
@@ -328,9 +322,7 @@ def get_full_curriculum(subject: str):
 
 @app.get("/health")
 def health_check():
-    """
-    Check API and OpenAI connection health
-    """
+    """Check API and OpenAI connection health"""
     try:
         api_key = os.getenv("OPENAI_API_KEY")
         if not api_key:
@@ -341,7 +333,6 @@ def health_check():
                 "openai": "not configured"
             }
         
-        # Check if curriculum files exist
         files_exist = {
             "biology_curriculum.json": os.path.exists("biology_curriculum.json"),
             "lesson_plan_template.json": os.path.exists("lesson_plan_template.json")
@@ -360,11 +351,7 @@ def health_check():
             "message": str(e)
         }
 
-# Run with: uvicorn main:app --reload --host 0.0.0.0 --port 8000
-
-
-
 if __name__ == "__main__":
     import uvicorn
     port = int(os.getenv("PORT", 8000))
-    uvicorn.run(app, host="0.0.0.0", port=port)    
+    uvicorn.run(app, host="0.0.0.0", port=port)
