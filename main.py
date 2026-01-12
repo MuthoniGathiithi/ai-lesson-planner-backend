@@ -105,24 +105,49 @@ def find_best_match(query: str, options: List[str], threshold: int = 70) -> Opti
     
     print(f"⚠️ No good match for '{query}' (best score: {result[1] if result else 0}%)")
     return None
+
 def load_curriculum(subject: str) -> Optional[Dict[str, Any]]:
     """
-    Load curriculum JSON file for a subject.
-    Returns None if file doesn't exist, allowing AI to generate content instead.
+    Load curriculum JSON file for a subject with smart name matching.
+    Handles typos in subject names (e.g., "Geogrphy" -> "Geography")
+    Returns None if file doesn't exist.
     """
-    filename = f"{subject.lower()}_curriculum.json"
+    # First try exact match
     try:
+        filename = f"{subject.lower()}_curriculum.json"
         with open(filename, 'r', encoding='utf-8') as f:
             curriculum = json.load(f)
             print(f"✅ Successfully loaded curriculum file: {filename}")
             return curriculum
     except FileNotFoundError:
-        print(f"⚠️ Curriculum file '{filename}' not found. AI will generate content without it.")
-        return None  # never raise exception
-    except json.JSONDecodeError as e:
-        print(f"❌ Invalid JSON in {filename}: {str(e)}")
+        # Try fuzzy matching with existing curriculum files
+        print(f"⚠️ Curriculum file '{subject.lower()}_curriculum.json' not found. Trying fuzzy match...")
+        
+        # Get all curriculum files in directory
+        curriculum_files = [f for f in os.listdir('.') if f.endswith('_curriculum.json')]
+        
+        if curriculum_files:
+            # Extract subject names from filenames
+            available_subjects = [f.replace('_curriculum.json', '') for f in curriculum_files]
+            
+            # Try fuzzy matching
+            best_match = find_best_match(subject.lower(), available_subjects, threshold=75)
+            
+            if best_match:
+                try:
+                    filename = f"{best_match}_curriculum.json"
+                    with open(filename, 'r', encoding='utf-8') as f:
+                        curriculum = json.load(f)
+                        print(f"✅ Fuzzy matched '{subject}' to '{best_match}' and loaded {filename}")
+                        return curriculum
+                except Exception as e:
+                    print(f"❌ Error loading fuzzy matched file: {str(e)}")
+        
+        print(f"⚠️ No curriculum file found for '{subject}'. AI will use general knowledge.")
         return None
-
+    except json.JSONDecodeError as e:
+        print(f"❌ Error: Invalid JSON in curriculum file: {str(e)}")
+        return None
 
 def extract_curriculum_content(
     curriculum: Optional[Dict[str, Any]], 
@@ -431,22 +456,14 @@ QUALITY STANDARDS - YOUR OUTPUT MUST MEET THESE:
 ❌ NEVER use overly academic language
 ❌ NEVER make it generic - it MUST be specific to {request.subject}
 
+FINAL OUTPUT:
+Return ONLY valid JSON matching the template structure.
+NO markdown code blocks.
+NO explanations.
+NO preamble.
+Just pure JSON.
 
 
-CURRICULUM DETAILS - USE THESE EXACT VALUES:
-========================================
-⚠️ CRITICAL: You MUST use these exact values in your JSON output:
-Strand: "{curriculum_content["strand"]}"
-Sub-strand: "{curriculum_content["sub_strand"]}"
-
-⚠️ DO NOT leave strand or subStrand empty in the JSON output
-⚠️ DO NOT change these values
-⚠️ These MUST appear in the "strand" and "subStrand" fields of your JSON
-
-LESSON LEARNING OUTCOMES:
-Write THREE detailed, measurable outcomes FOR {request.subject}.
-Start each with an action verb (analyze, evaluate, create, apply, demonstrate, design, construct).
-Each outcome MUST be EXACTLY 20 WORDS - no more, no less.
 
 
 ========================================
@@ -477,7 +494,6 @@ NO markdown code blocks.
 NO explanations.
 NO preamble.
 Just pure JSON.
-
 
 """
 
@@ -546,17 +562,30 @@ def read_root():
 @app.post("/generate-lesson-plan")
 async def create_lesson_plan(request: LessonPlanRequest):
     """
-    Generate a CBC-aligned lesson plan. Always tries AI fallback if curriculum is missing.
+    Generate a CBC-aligned lesson plan based on curriculum content.
+    Intelligently handles typos and missing curriculum files.
     """
-    print(f"\n📝 Generating lesson plan for {request.subject}, Grade {request.grade}")
-    lesson_plan = generate_lesson_plan(request)
-    
-    return {
-        "success": True,
-        "message": "Lesson plan generated successfully",
-        "lesson_plan": lesson_plan
-    }
-
+    try:
+        print(f"\n{'='*60}")
+        print(f"📝 New lesson plan request:")
+        print(f"   Subject: {request.subject}")
+        print(f"   Grade: {request.grade}")
+        print(f"   Strand: {request.strand}")
+        print(f"   Sub-strand: {request.sub_strand}")
+        print(f"{'='*60}\n")
+        
+        lesson_plan = generate_lesson_plan(request)
+        
+        return {
+            "success": True,
+            "message": "Lesson plan generated successfully",
+            "lesson_plan": lesson_plan
+        }
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        print(f"❌ Unexpected error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error generating lesson plan: {str(e)}")
 
 @app.get("/strands/{subject}")
 def get_strands(subject: str):
