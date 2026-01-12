@@ -456,13 +456,59 @@ QUALITY STANDARDS - YOUR OUTPUT MUST MEET THESE:
 ❌ NEVER use overly academic language
 ❌ NEVER make it generic - it MUST be specific to {request.subject}
 
+
+
+CURRICULUM DETAILS - USE THESE EXACT VALUES:
+========================================
+⚠️ CRITICAL: You MUST use these exact values in your JSON output:
+Strand: "{curriculum_content["strand"]}"
+Sub-strand: "{curriculum_content["sub_strand"]}"
+
+⚠️ DO NOT leave strand or subStrand empty in the JSON output
+⚠️ DO NOT change these values
+⚠️ These MUST appear in the "strand" and "subStrand" fields of your JSON
+
+LESSON LEARNING OUTCOMES:
+Write THREE detailed, measurable outcomes FOR {request.subject}.
+Start each with an action verb (analyze, evaluate, create, apply, demonstrate, design, construct).
+Each outcome MUST be EXACTLY 20 WORDS - no more, no less.
+
+
+========================================
+CRITICAL JSON OUTPUT REQUIREMENTS:
+========================================
+⚠️ The "subject" field MUST contain: "{request.subject}"
+⚠️ The "strand" field MUST contain: "{curriculum_content["strand"]}"
+⚠️ The "subStrand" field MUST contain: "{curriculum_content["sub_strand"]}"
+⚠️ DO NOT leave these fields empty
+⚠️ DO NOT use placeholder values
+⚠️ DO NOT change these to different subjects/strands
+
+QUALITY STANDARDS - YOUR OUTPUT MUST MEET THESE:
+✅ Subject field: "{request.subject}" (EXACT MATCH REQUIRED)
+✅ Strand field: "{curriculum_content["strand"]}" (EXACT MATCH REQUIRED)
+✅ SubStrand field: "{curriculum_content["sub_strand"]}" (EXACT MATCH REQUIRED)
+✅ Each Learning Outcome: EXACTLY 20 WORDS, relevant to {request.subject}
+✅ Key Inquiry Question: MAXIMUM 10 WORDS, about {curriculum_content["sub_strand"]}
+✅ Introduction: MAXIMUM 100 WORDS, specific to {request.subject}
+✅ Each Development Step: APPROXIMATELY 200 WORDS (3-5 steps total), teaching {curriculum_content["sub_strand"]}
+✅ Conclusion: MAXIMUM 150 WORDS, reviewing {curriculum_content["sub_strand"]}
+✅ Resources: 6-8 items relevant to {request.subject}
+✅ All content specific to {request.subject}, not generic
+
 FINAL OUTPUT:
 Return ONLY valid JSON matching the template structure.
 NO markdown code blocks.
 NO explanations.
 NO preamble.
 Just pure JSON.
+
+
 """
+
+
+
+
 
 
     try:
