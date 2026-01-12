@@ -464,11 +464,11 @@ No extra text.
         print(f"📊 Using curriculum data: {has_curriculum_data}")
         
         response = client.chat.completions.create(
-            model="gpt-4o",
+            model="gpt-4o-mini",
             messages=[
                 {
                     "role": "system",
-                    "content": "You are an expert Kenyan CBC teacher who creates detailed, engaging, standards-aligned lesson plans in JSON format. You understand the Kenyan education system, cultural context, and create culturally relevant, practical lessons. You are intelligent enough to interpret unclear or misspelled strand/sub-strand names and create appropriate content."
+                    "content": "You are an expert Kenyan CBC teacher for grade 10  who creates detailed, engaging, standards-aligned lesson plans in JSON format. You understand the Kenyan education system for grade 10 , cultural context, and create culturally relevant, practical lessons. You are intelligent enough to interpret unclear or misspelled strand/sub-strand names and create appropriate content."
                 },
                 {
                     "role": "user",
