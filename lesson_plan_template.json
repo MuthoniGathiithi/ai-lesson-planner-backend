@@ -1,79 +1,54 @@
 {
   "lessonPlan": {
+    "title": "LESSON PLAN",
+
     "administrativeDetails": {
-      "school": "Lenga GUH Senior School",
-      "subject": "Geography",
-      "class": "9025",
-      "grade": 10,
-      "term": 3,
-      "date": "10-09-2025",
-      "time": {
-        "start": "08:10",
-        "end": "08:50"
-      },
-      "duration": "40 minutes",
-      "teacher": "Serious Man",
-      "teacherTSCNumber": "123456",
-      "studentEnrollment": {
-        "boys": 22,
-        "girls": 2,
-        "total": 24
+      "school": "",
+      "subject": "",
+      "year": "",
+      "term": "",
+      "date": "",
+      "time": "",
+      "grade": "",
+      "roll": {
+        "boys": "",
+        "girls": "",
+        "total": ""
       }
     },
-    "curriculumAlignment": {
-      "stand": "Natural systems and processes",
-      "substrand": "Vulcanicity"
+
+    "teacherDetails": {
+      "name": "",
+      "tscNumber": ""
     },
-    "learningOutcomes": [
-      {
-        "id": "a",
-        "outcome": "Name intrusive features on the earth"
-      },
-      {
-        "id": "b",
-        "outcome": "Draw intrusive features on the earth"
-      },
-      {
-        "id": "c",
-        "outcome": "Appreciate the intrusive features formed in the earth"
-      },
-      {
-        "id": "d",
-        "outcome": "Answer question: Why study intrusive features?"
-      }
-    ],
-    "guidingQuestion": "Why study intrusive features?",
-    "learningResources": [
-      "Models",
-      "Photographs",
-      "Video clips"
-    ],
+
+    "strand": "",
+    "subStrand": "",
+
+    "lessonLearningOutcomes": {
+      "statement": "By the end of the lesson, the learner should be able to:",
+      "outcomes": [
+        { "id": "a", "outcome": "" },
+        { "id": "b", "outcome": "" },
+        { "id": "c", "outcome": "" }
+      ]
+    },
+
+    "keyInquiryQuestion": "",
+
+    "learningResources": [],
+
     "lessonFlow": {
       "introduction": {
-        "description": "Learners brainstorm on the formation of intrusive features"
+        "description": ""
       },
       "development": [
-        {
-          "step": 1,
-          "title": "Observe",
-          "description": "Observe photographic and video clips of intrusive features",
-          "activity": "Learners observe photographs and video clips of intrusive features using digital literacy"
-        },
-        {
-          "step": 2,
-          "title": "Drawing and modelling intrusive features",
-          "description": "Learners to draw all the intrusive features and colour parts to enhance digital literacy",
-          "activity": "Learners draw and model intrusive features with color enhancements"
-        },
-        {
-          "step": 3,
-          "title": "Displaying models and photographs",
-          "description": "Learners to display the photographs and models in the Geography room",
-          "activity": "Display in Geography room to enhance unity, collaboration & teamwork"
-        }
+        { "step": 1, "description": "" },
+        { "step": 2, "description": "" },
+        { "step": 3, "description": "" }
       ],
       "conclusion": {
-        "description": "Learners are guided to highlight the intrusive features in the earth"
+        "description": ""
       }
     }
   }

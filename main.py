@@ -323,72 +323,105 @@ def generate_lesson_plan(request: LessonPlanRequest):
         values_str = "- Responsibility\n- Respect\n- Unity\n- Peace"
     
     prompt = f"""
-You are an expert {request.subject} teacher in Kenya creating a CBC-aligned lesson plan.
+You are a Kenyan secondary school teacher preparing a handwritten-style CBC lesson plan for official school inspection.
 
-**IMPORTANT INTELLIGENCE NOTES:**
-- The user provided: Strand: "{curriculum_content["strand"]}", Sub-strand: "{curriculum_content["sub_strand"]}"
-- {"✅ Official CBC curriculum data is available and included below" if has_curriculum_data else "⚠️ No curriculum file available - use your expertise in " + request.subject + " to generate appropriate content"}
-- If the strand/sub-strand seems unclear or contains typos, intelligently interpret what the user likely meant based on your knowledge of {request.subject} curriculum
+VERY IMPORTANT RULES:
+- Follow the lesson plan structure EXACTLY as provided
+- Do NOT change the order of sections
+- Do NOT rename headings
+- Do NOT add or remove fields
+- Use simple, teacher-centered Kenyan lesson plan language
+- Avoid academic or textbook-style writing
 
-**LESSON PLAN TEMPLATE TO FOLLOW:**
+Use phrases commonly found in teachers’ lesson plan records such as:
+- "Learners brainstorm..."
+- "Learners discuss..."
+- "Learners work in groups..."
+- "Learners are guided to..."
+
+LESSON PLAN TEMPLATE (DO NOT ALTER):
 {json.dumps(template, indent=2)}
 
-**ADMINISTRATIVE DETAILS TO USE:**
-- School: {request.school}
-- Subject: {request.subject}
-- Class: {request.class_name}
-- Grade: {request.grade}
-- Term: {request.term}
-- Date: {request.date}
-- Time: {request.start_time} - {request.end_time}
-- Duration: 40 minutes
-- Teacher: {request.teacher_name}
-- TSC Number: {request.teacher_tsc_number}
-- Boys: {request.boys}, Girls: {request.girls}, Total: {total_students}
+ADMINISTRATIVE DETAILS (FILL EXACTLY):
+School: {request.school}
+Subject: {request.subject}
+Year: {request.date.split('-')[2]}
+Term: {request.term}
+Date: {request.date}
+Time: {request.start_time} - {request.end_time}
+Grade: {request.grade}
+Roll:
+- Boys: {request.boys}
+- Girls: {request.girls}
+- Total: {total_students}
 
-**CURRICULUM FOCUS:**
+TEACHER DETAILS:
+Name: {request.teacher_name}
+TSC Number: {request.teacher_tsc_number}
+
+CURRICULUM DETAILS:
 Strand: {curriculum_content["strand"]}
 Sub-strand: {curriculum_content["sub_strand"]}
 
-**CURRICULUM CONTENT:**
+LESSON LEARNING OUTCOMES:
+Write THREE outcomes only.
+Begin each with an action verb.
+Follow this statement exactly:
+"By the end of the lesson, the learner should be able to:"
+a) ...
+b) ...
+c) ...
 
-Topics to Cover:{topics_str}
+KEY INQUIRY QUESTION:
+Write ONE relevant inquiry question for the sub-strand.
 
-Learning Outcomes:{outcomes_str}
+LEARNING RESOURCES:
+List 3–5 appropriate classroom learning resources.
 
-Key Concepts: {curriculum_content["key_concepts"] if curriculum_content["key_concepts"] else "Generate relevant key concepts for this topic based on Grade " + str(request.grade) + " level"}
+LESSON FLOW GUIDELINES (SUBJECT-AWARE):
 
-Key Inquiry Questions:
-{chr(10).join(f"- {q}" for q in curriculum_content["key_inquiry_questions"]) if curriculum_content.get("key_inquiry_questions") else "Generate thought-provoking inquiry questions appropriate for Grade " + str(request.grade)}
+INTRODUCTION:
+A short activity where learners recall prior knowledge or brainstorm ideas related to the lesson.
 
-Suggested Learning Experiences:{experiences_str}
+DEVELOPMENT:
+Choose activities appropriate to the subject:
 
-Core Competencies to Develop:
-{competencies_str}
+• Mathematics:
+  Step 1 – Review examples or prior concepts
+  Step 2 – Solve problems with guidance
+  Step 3 – Apply skills or present solutions
 
-Values to Integrate:
-{values_str}
+• Sciences (Biology, Chemistry, Physics, Geography):
+  Step 1 – Observe or explore materials, diagrams, or demonstrations
+  Step 2 – Explain, draw, experiment, or analyze
+  Step 3 – Discuss findings or apply concepts
 
-**INSTRUCTIONS:**
-1. Follow the EXACT JSON structure from the template
-2. Fill in all administrative details accurately as provided above
-3. Create 3-4 specific, measurable learning outcomes (with ids "a", "b", "c", "d") {"based on the curriculum outcomes provided" if has_curriculum_data else "appropriate for Grade " + str(request.grade) + " " + request.subject}
-4. Develop a thought-provoking guiding question {"from the key inquiry questions provided" if curriculum_content.get("key_inquiry_questions") else "relevant to the strand and sub-strand"}
-5. List 3-5 practical learning resources appropriate for Grade {request.grade} students studying this topic
-6. Design an engaging 5-minute introduction activity that activates prior knowledge
-7. Create 3 progressive development steps (each 10-12 minutes):
-   - Step 1: Observation/exploration activity (teacher-led demonstration or guided discovery)
-   - Step 2: Hands-on practice/modeling activity (students actively engage with the concept)
-   - Step 3: Application/presentation activity (students apply learning and share their work)
-8. Design a 5-minute conclusion for summary, reflection, and assessment
-9. Incorporate the core competencies and values throughout activities naturally
-10. Make activities practical, engaging, culturally relevant, and appropriate for Kenyan Grade {request.grade} students
-11. Reference digital literacy, collaboration, and teamwork in activities where appropriate
-12. Ensure the entire lesson can be completed in exactly 40 minutes
-13. {"Use the official CBC curriculum content provided as the foundation for your lesson plan" if has_curriculum_data else "Create educationally sound content appropriate for Kenyan CBC standards and Grade " + str(request.grade) + " level"}
-14. Be creative and specific with activities - avoid generic descriptions
+• Languages:
+  Step 1 – Listen, read, or identify language features
+  Step 2 – Practice speaking, writing, or grammar
+  Step 3 – Present, role-play, or answer questions
 
-Return ONLY valid JSON matching the template structure exactly. No additional text, markdown, or code blocks.
+• Humanities / Social Studies / CRE:
+  Step 1 – Discuss or brainstorm ideas
+  Step 2 – Explain concepts or answer questions
+  Step 3 – Present views or reflect on learning
+
+IMPORTANT:
+- Use realistic classroom activities for the given subject
+- Use teacher language, not academic descriptions
+
+CONCLUSION:
+Learners are guided to summarize the key lesson points.
+
+TIME:
+Ensure the lesson fits within 40 minutes.
+
+FINAL OUTPUT RULE:
+Return ONLY valid JSON.
+No explanations.
+No markdown.
+No extra text.
+
 """
 
     try:
