@@ -326,27 +326,19 @@ def generate_lesson_plan(request: LessonPlanRequest):
     prompt = f"""
 
 
-You are a Kenyan secondary school teacher preparing a detailed CBC lesson plan for official school inspection.
+ You are a Kenyan secondary school teacher for grade 10  preparing a COMPREHENSIVE, DETAILED CBC lesson plan for official school inspection.
 
-VERY IMPORTANT RULES:
-- Follow the lesson plan structure EXACTLY as provided
-- Do NOT change the order of sections
-- Do NOT rename headings
-- Do NOT add or remove fields
-- Use simple, teacher-centered Kenyan lesson plan language
-- Write DETAILED, COMPREHENSIVE descriptions (3-5 sentences minimum per section)
-- Each development step should be at least 4-5 sentences with specific activities
+CRITICAL INSTRUCTIONS - READ CAREFULLY:
+1. Follow the lesson plan structure EXACTLY as provided
+2. Do NOT change section names or order
+3. Write detailed, specific descriptions with exact word counts as specified
+4. Use authentic Kenyan teacher language
+5. Be SPECIFIC - include actual examples, questions, and activities
 
-Use phrases commonly found in teachers' lesson plan records such as:
-- "Learners brainstorm..."
-- "Learners discuss..."
-- "Learners work in groups..."
-- "Learners are guided to..."
-
-LESSON PLAN TEMPLATE (DO NOT ALTER):
+LESSON PLAN TEMPLATE (FOLLOW EXACTLY):
 {json.dumps(template, indent=2)}
 
-ADMINISTRATIVE DETAILS (FILL EXACTLY):
+ADMINISTRATIVE DETAILS (FILL THESE EXACTLY AS GIVEN):
 School: {request.school}
 Subject: {request.subject}
 Year: {request.date.split('-')[2]}
@@ -363,100 +355,115 @@ TEACHER DETAILS:
 Name: {request.teacher_name}
 TSC Number: {request.teacher_tsc_number}
 
-CURRICULUM DETAILS:
+CURRICULUM DETAILS (USE THESE EXACTLY):
 Strand: {curriculum_content["strand"]}
 Sub-strand: {curriculum_content["sub_strand"]}
 
 LESSON LEARNING OUTCOMES:
-Write THREE comprehensive outcomes.
-Begin each with an action verb (analyze, evaluate, create, apply, etc.)
-Follow this statement exactly:
+Write THREE detailed, measurable outcomes.
+Start each with an action verb (analyze, evaluate, create, apply, demonstrate, design, construct).
+Each outcome MUST be EXACTLY 20 WORDS - no more, no less.
+
+Format:
 "By the end of the lesson, the learner should be able to:"
-a) [Write a detailed, specific outcome with context - 1-2 sentences]
-b) [Write a detailed, specific outcome with context - 1-2 sentences]
-c) [Write a detailed, specific outcome with context - 1-2 sentences]
+a) [Detailed outcome - EXACTLY 20 WORDS]
+b) [Detailed outcome - EXACTLY 20 WORDS]
+c) [Detailed outcome - EXACTLY 20 WORDS]
 
 KEY INQUIRY QUESTION:
-Write ONE thought-provoking inquiry question that encourages critical thinking about the sub-strand.
-Make it open-ended and engaging for Grade {request.grade} learners.
+Write ONE thought-provoking, open-ended question that:
+- Encourages critical thinking
+- Relates directly to the sub-strand: {curriculum_content["sub_strand"]}
+- Is appropriate for Grade {request.grade} studying {request.subject}
+- Has no simple yes/no answer
+- Is MAXIMUM 10 WORDS (can be shorter, but not longer)
 
 LEARNING RESOURCES:
-List 5-7 specific, practical classroom learning resources with details where helpful.
-Examples: "Chart showing the water cycle", "Set of 30 calculators", "Biology textbook pages 45-52"
+List 4-6 specific, practical resources. Be detailed:
+Examples: 
+- "Large wall chart showing the classification of living organisms with colorful illustrations"
+- "Set of 30 scientific calculators (Casio fx-82MS)"
+- "Geography textbook - Kenya Secondary Geography Book 2, pages 67-82"
+- "Manila paper (10 sheets) and colored markers (set of 12)"
 
-LESSON FLOW GUIDELINES - WRITE DETAILED DESCRIPTIONS:
+LESSON FLOW - WRITE DETAILED DESCRIPTIONS:
 
-INTRODUCTION (Write 4-6 sentences):
-Describe a detailed opening activity where learners:
-- Recall and share prior knowledge
-- Connect to real-life experiences
-- Get curious about the lesson topic
-Include specific questions the teacher might ask and expected student responses.
-Describe the classroom interaction in detail.
+INTRODUCTION (MAXIMUM 10 WORDS):
+Write a detailed narrative describing:
+- The exact opening activity (be specific about what happens)
+- Specific questions the teacher asks (write out 2-3 actual questions)
+- How learners respond and what they say
+- How this connects to their prior knowledge or real life
+- How curiosity is built about today's topic
 
-DEVELOPMENT (Each step should be 5-7 sentences):
+Keep it focused and concise - MAXIMUM 10 WORDS TOTAL.
 
-Step 1 - Teacher-Led Exploration:
-Describe in detail:
-- Exactly what the teacher does (demonstrates, explains, shows)
-- Specific examples or content covered
-- How learners observe, take notes, or participate
-- Questions asked and discussions held
+DEVELOPMENT - VARYING LENGTHS (3-5 STEPS):
+
+You can create 3, 4, or 5 development steps depending on what makes sense for this {request.subject} lesson.
+Each step should be approximately 200 WORDS.
+
+For EACH step (whether you do 3, 4, or 5 steps), write approximately 20 WORDS covering:
+- Exactly what happens in this step (specific actions)
+- The specific content/concepts/activities involved
 - Materials or resources used
-Make this vivid and specific to {request.subject}.
+- How learners are organized (groups, pairs, individual)
+- Specific examples, questions, or tasks
+- How the teacher supports learning
+- What learners produce or demonstrate
+- Assessment or feedback methods
 
-Step 2 - Guided Practice:
-Describe in detail:
-- The specific activity learners do (solve problems, conduct experiments, practice skills)
-- How they're organized (pairs, groups of 4, individually)
-- Exactly what they're working on (specific problems, questions, or tasks)
-- How the teacher circulates and supports
-- Examples of learner-teacher interactions
-Be subject-specific for {request.subject}.
+Make each step practical and realistic for a Kenyan Grade {request.grade} {request.subject} classroom.
 
-Step 3 - Independent Application & Presentation:
-Describe in detail:
-- What learners create, solve, or present
-- How they share their work (presentations, gallery walk, peer review)
-- Specific assessment questions or tasks
-- How peers provide feedback
-- Teacher's role in facilitating
-Make this practical for a Grade {request.grade} {request.subject} class.
+Step 1: [~20 words - Teacher-Led Exploration or first major activity]
+Step 2: [~20 words - Guided Practice or second major activity]
+Step 3: [~20 words - Independent Work/Application or third major activity]
+[Step 4: Optional - ~20 words if needed]
+[Step 5: Optional - ~20 words if needed]
 
-CONCLUSION (Write 4-6 sentences):
-Describe in detail how:
-- Learners summarize the key lesson points
-- The teacher guides reflection on learning outcomes
-- Connections are made to real life or future lessons
-- Assessment of understanding occurs
-- Learners are given homework or extension tasks (if appropriate)
+CONCLUSION (15 WORDS MAXIMUM):
+Write a detailed narrative covering:
+- How learners summarize the main points (specific process)
+- Key questions asked to review learning outcomes (write out 2-3 questions)
+- How learners reflect on what they learned
+- Real-life applications or connections made
+- Brief assessment activity (exit ticket, quick quiz, reflection)
+- Homework or extension task assigned (be specific)
+
+
+Keep focused and purposeful - MAXIMUM 15 WORDS.
 
 TIME ALLOCATION:
 - Introduction: 8-10 minutes
-- Development: 25-30 minutes total (8-10 mins per step)
+- Development: 25-30 minutes total (distributed across your 3-5 steps)
 - Conclusion: 5-7 minutes
 Total: 40 minutes
 
-CRITICAL REQUIREMENT:
-Every section must have SUBSTANTIAL DETAIL. Think of this as a lesson plan that another teacher could pick up and teach from.
-Each description should paint a clear picture of what's happening in the classroom.
+QUALITY STANDARDS - YOUR OUTPUT MUST MEET THESE:
+✅ Each Learning Outcome: EXACTLY 20 WORDS
+✅ Key Inquiry Question: MAXIMUM 10 WORDS
+✅ Introduction: MAXIMUM 10 WORDS
+✅ Each Development Step: APPROXIMATELY 20 WORDS (3-5 steps total)
+✅ Conclusion: MAXIMUM 15 WORDS
+✅ Resources: 4-6 items with details
+✅ Subject-specific content for {request.subject}
+✅ Realistic for Kenyan classroom context
+✅ Written in teacher's narrative voice
+✅ Includes specific examples, questions, and activities
 
-Write descriptions that are:
-✅ Detailed (4-7 sentences per section)
-✅ Specific to the subject and grade level
-✅ Actionable (another teacher could follow them)
-✅ Realistic for a Kenyan classroom
-❌ NOT brief one-liners
-❌ NOT vague generalities
-❌ NOT overly academic language
+❌ NEVER exceed the word limits specified
+❌ NEVER skip specific examples or actual questions
+❌ NEVER use overly academic language
+❌ NEVER make it generic - it MUST be specific to {request.subject}
 
-FINAL OUTPUT RULE:
-Return ONLY valid JSON.
-No explanations.
-No markdown.
-No extra text.
-
+FINAL OUTPUT:
+Return ONLY valid JSON matching the template structure.
+NO markdown code blocks.
+NO explanations.
+NO preamble.
+Just pure JSON.
 """
+
 
     try:
         print(f"🤖 Generating lesson plan for {request.subject} - Grade {request.grade}")
