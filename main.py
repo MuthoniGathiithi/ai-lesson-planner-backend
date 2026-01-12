@@ -321,9 +321,12 @@ def generate_lesson_plan(request: LessonPlanRequest):
         experiences_str = "Design engaging, age-appropriate learning experiences"
         competencies_str = "- Communication and collaboration\n- Critical thinking and problem solving\n- Creativity and imagination\n- Digital literacy"
         values_str = "- Responsibility\n- Respect\n- Unity\n- Peace"
-    
+  
+
     prompt = f"""
-You are a Kenyan secondary school teacher preparing a handwritten-style CBC lesson plan for official school inspection.
+
+
+You are a Kenyan secondary school teacher preparing a detailed CBC lesson plan for official school inspection.
 
 VERY IMPORTANT RULES:
 - Follow the lesson plan structure EXACTLY as provided
@@ -331,9 +334,10 @@ VERY IMPORTANT RULES:
 - Do NOT rename headings
 - Do NOT add or remove fields
 - Use simple, teacher-centered Kenyan lesson plan language
-- Avoid academic or textbook-style writing
+- Write DETAILED, COMPREHENSIVE descriptions (3-5 sentences minimum per section)
+- Each development step should be at least 4-5 sentences with specific activities
 
-Use phrases commonly found in teachers’ lesson plan records such as:
+Use phrases commonly found in teachers' lesson plan records such as:
 - "Learners brainstorm..."
 - "Learners discuss..."
 - "Learners work in groups..."
@@ -364,57 +368,87 @@ Strand: {curriculum_content["strand"]}
 Sub-strand: {curriculum_content["sub_strand"]}
 
 LESSON LEARNING OUTCOMES:
-Write THREE outcomes only.
-Begin each with an action verb.
+Write THREE comprehensive outcomes.
+Begin each with an action verb (analyze, evaluate, create, apply, etc.)
 Follow this statement exactly:
 "By the end of the lesson, the learner should be able to:"
-a) ...
-b) ...
-c) ...
+a) [Write a detailed, specific outcome with context - 1-2 sentences]
+b) [Write a detailed, specific outcome with context - 1-2 sentences]
+c) [Write a detailed, specific outcome with context - 1-2 sentences]
 
 KEY INQUIRY QUESTION:
-Write ONE relevant inquiry question for the sub-strand.
+Write ONE thought-provoking inquiry question that encourages critical thinking about the sub-strand.
+Make it open-ended and engaging for Grade {request.grade} learners.
 
 LEARNING RESOURCES:
-List 3–5 appropriate classroom learning resources.
+List 5-7 specific, practical classroom learning resources with details where helpful.
+Examples: "Chart showing the water cycle", "Set of 30 calculators", "Biology textbook pages 45-52"
 
-LESSON FLOW GUIDELINES (SUBJECT-AWARE):
+LESSON FLOW GUIDELINES - WRITE DETAILED DESCRIPTIONS:
 
-INTRODUCTION:
-A short activity where learners recall prior knowledge or brainstorm ideas related to the lesson.
+INTRODUCTION (Write 4-6 sentences):
+Describe a detailed opening activity where learners:
+- Recall and share prior knowledge
+- Connect to real-life experiences
+- Get curious about the lesson topic
+Include specific questions the teacher might ask and expected student responses.
+Describe the classroom interaction in detail.
 
-DEVELOPMENT:
-Choose activities appropriate to the subject:
+DEVELOPMENT (Each step should be 5-7 sentences):
 
-• Mathematics:
-  Step 1 – Review examples or prior concepts
-  Step 2 – Solve problems with guidance
-  Step 3 – Apply skills or present solutions
+Step 1 - Teacher-Led Exploration:
+Describe in detail:
+- Exactly what the teacher does (demonstrates, explains, shows)
+- Specific examples or content covered
+- How learners observe, take notes, or participate
+- Questions asked and discussions held
+- Materials or resources used
+Make this vivid and specific to {request.subject}.
 
-• Sciences (Biology, Chemistry, Physics, Geography):
-  Step 1 – Observe or explore materials, diagrams, or demonstrations
-  Step 2 – Explain, draw, experiment, or analyze
-  Step 3 – Discuss findings or apply concepts
+Step 2 - Guided Practice:
+Describe in detail:
+- The specific activity learners do (solve problems, conduct experiments, practice skills)
+- How they're organized (pairs, groups of 4, individually)
+- Exactly what they're working on (specific problems, questions, or tasks)
+- How the teacher circulates and supports
+- Examples of learner-teacher interactions
+Be subject-specific for {request.subject}.
 
-• Languages:
-  Step 1 – Listen, read, or identify language features
-  Step 2 – Practice speaking, writing, or grammar
-  Step 3 – Present, role-play, or answer questions
+Step 3 - Independent Application & Presentation:
+Describe in detail:
+- What learners create, solve, or present
+- How they share their work (presentations, gallery walk, peer review)
+- Specific assessment questions or tasks
+- How peers provide feedback
+- Teacher's role in facilitating
+Make this practical for a Grade {request.grade} {request.subject} class.
 
-• Humanities / Social Studies / CRE:
-  Step 1 – Discuss or brainstorm ideas
-  Step 2 – Explain concepts or answer questions
-  Step 3 – Present views or reflect on learning
+CONCLUSION (Write 4-6 sentences):
+Describe in detail how:
+- Learners summarize the key lesson points
+- The teacher guides reflection on learning outcomes
+- Connections are made to real life or future lessons
+- Assessment of understanding occurs
+- Learners are given homework or extension tasks (if appropriate)
 
-IMPORTANT:
-- Use realistic classroom activities for the given subject
-- Use teacher language, not academic descriptions
+TIME ALLOCATION:
+- Introduction: 8-10 minutes
+- Development: 25-30 minutes total (8-10 mins per step)
+- Conclusion: 5-7 minutes
+Total: 40 minutes
 
-CONCLUSION:
-Learners are guided to summarize the key lesson points.
+CRITICAL REQUIREMENT:
+Every section must have SUBSTANTIAL DETAIL. Think of this as a lesson plan that another teacher could pick up and teach from.
+Each description should paint a clear picture of what's happening in the classroom.
 
-TIME:
-Ensure the lesson fits within 40 minutes.
+Write descriptions that are:
+✅ Detailed (4-7 sentences per section)
+✅ Specific to the subject and grade level
+✅ Actionable (another teacher could follow them)
+✅ Realistic for a Kenyan classroom
+❌ NOT brief one-liners
+❌ NOT vague generalities
+❌ NOT overly academic language
 
 FINAL OUTPUT RULE:
 Return ONLY valid JSON.
