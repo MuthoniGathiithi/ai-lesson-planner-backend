@@ -292,6 +292,15 @@ def generate_lesson_plan(request: LessonPlanRequest):
     Generate a CBC-aligned lesson plan using OpenAI.
     Intelligently handles missing curriculum files and typos.
     """
+    # Sanitize incoming strings to avoid issues like "French " -> "French"
+    school = request.school.strip()
+    subject = request.subject.strip()
+    class_name = request.class_name.strip()
+    teacher_name = request.teacher_name.strip()
+    teacher_tsc_number = request.teacher_tsc_number.strip()
+    strand_name = request.strand.strip()
+    sub_strand_name = request.sub_strand.strip()
+
     t0_total = time.perf_counter()
 
     t0 = time.perf_counter()
@@ -299,14 +308,14 @@ def generate_lesson_plan(request: LessonPlanRequest):
     t_template = time.perf_counter() - t0
 
     t0 = time.perf_counter()
-    curriculum = load_curriculum(request.subject)
+    curriculum = load_curriculum(subject)
     t_curriculum_load = time.perf_counter() - t0
 
     t0 = time.perf_counter()
     curriculum_content = extract_curriculum_content(
         curriculum,
-        request.strand,
-        request.sub_strand
+        strand_name,
+        sub_strand_name
     )
     t_curriculum_extract = time.perf_counter() - t0
     
@@ -347,11 +356,11 @@ CRITICAL INSTRUCTIONS - READ CAREFULLY:
 5. Be SPECIFIC - include actual examples, questions, and activities
 
 LESSON PLAN TEMPLATE (FOLLOW EXACTLY):
-{json.dumps(template, indent=2)}
+{json.dumps(template, separators=(",", ":"))}
 
 ADMINISTRATIVE DETAILS (FILL THESE EXACTLY AS GIVEN):
-School: {request.school}
-Subject: {request.subject}
+School: {school}
+Subject: {subject}
 Year: {request.date.split('-')[2]}
 Term: {request.term}
 Date: {request.date}
@@ -363,8 +372,8 @@ Roll:
 - Total: {total_students}
 
 TEACHER DETAILS:
-Name: {request.teacher_name}
-TSC Number: {request.teacher_tsc_number}
+Name: {teacher_name}
+TSC Number: {teacher_tsc_number}
 
 CURRICULUM DETAILS (USE THESE EXACTLY):
 Strand: {curriculum_content["strand"]}
@@ -391,11 +400,6 @@ Write ONE thought-provoking, open-ended question that:
 
 LEARNING RESOURCES:
 List 4-6 specific, practical resources. Be detailed:
-Examples: 
-- "Large wall chart showing the classification of living organisms with colorful illustrations"
-- "Set of 30 scientific calculators (Casio fx-82MS)"
-- "Geography textbook - Kenya Secondary Geography Book 2, pages 67-82"
-- "Manila paper (10 sheets) and colored markers (set of 12)"
 
 LESSON FLOW - WRITE DETAILED DESCRIPTIONS:
 
@@ -412,7 +416,7 @@ Keep it focused and concise - MAXIMUM 10 WORDS TOTAL.
 DEVELOPMENT - VARYING LENGTHS (3-5 STEPS):
 
 You can create 3, 4, or 5 development steps depending on what makes sense for this {request.subject} lesson.
-Each step should be approximately 200 WORDS.
+Each step should be approximately 20 WORDS.
 
 For EACH step (whether you do 3, 4, or 5 steps), write approximately 20 WORDS covering:
 - Exactly what happens in this step (specific actions)
@@ -493,10 +497,10 @@ QUALITY STANDARDS - YOUR OUTPUT MUST MEET THESE:
 ✅ SubStrand field: "{curriculum_content["sub_strand"]}" (EXACT MATCH REQUIRED)
 ✅ Each Learning Outcome: EXACTLY 20 WORDS, relevant to {request.subject}
 ✅ Key Inquiry Question: MAXIMUM 10 WORDS, about {curriculum_content["sub_strand"]}
-✅ Introduction: MAXIMUM 100 WORDS, specific to {request.subject}
-✅ Each Development Step: APPROXIMATELY 200 WORDS (3-5 steps total), teaching {curriculum_content["sub_strand"]}
-✅ Conclusion: MAXIMUM 150 WORDS, reviewing {curriculum_content["sub_strand"]}
-✅ Resources: 6-8 items relevant to {request.subject}
+✅ Introduction: MAXIMUM 10 WORDS, specific to {request.subject}
+✅ Each Development Step: APPROXIMATELY 20 WORDS (3-5 steps total), teaching {curriculum_content["sub_strand"]}
+✅ Conclusion: MAXIMUM 15 WORDS, reviewing {curriculum_content["sub_strand"]}
+✅ Resources: 3-5 items relevant to {request.subject}
 ✅ All content specific to {request.subject}, not generic
 
 FINAL OUTPUT:
