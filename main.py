@@ -7,6 +7,7 @@ import os
 import json
 from typing import List, Optional, Dict, Any
 from rapidfuzz import fuzz, process
+import time
 
 # Load environment variables
 load_dotenv()
@@ -291,14 +292,23 @@ def generate_lesson_plan(request: LessonPlanRequest):
     Generate a CBC-aligned lesson plan using OpenAI.
     Intelligently handles missing curriculum files and typos.
     """
+    t0_total = time.perf_counter()
+
+    t0 = time.perf_counter()
     template = load_lesson_template()
+    t_template = time.perf_counter() - t0
+
+    t0 = time.perf_counter()
     curriculum = load_curriculum(request.subject)
-    
+    t_curriculum_load = time.perf_counter() - t0
+
+    t0 = time.perf_counter()
     curriculum_content = extract_curriculum_content(
         curriculum,
         request.strand,
         request.sub_strand
     )
+    t_curriculum_extract = time.perf_counter() - t0
     
     total_students = request.boys + request.girls
     
@@ -323,6 +333,7 @@ def generate_lesson_plan(request: LessonPlanRequest):
         values_str = "- Responsibility\n- Respect\n- Unity\n- Peace"
   
 
+    t0 = time.perf_counter()
     prompt = f"""
 
 
@@ -497,6 +508,8 @@ Just pure JSON.
 
 """
 
+    t_prompt_build = time.perf_counter() - t0
+
 
 
 
@@ -506,7 +519,8 @@ Just pure JSON.
         print(f"🤖 Generating lesson plan for {request.subject} - Grade {request.grade}")
         print(f"📚 Strand: {curriculum_content['strand']}, Sub-strand: {curriculum_content['sub_strand']}")
         print(f"📊 Using curriculum data: {has_curriculum_data}")
-        
+
+        t0 = time.perf_counter()
         response = client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[
@@ -522,8 +536,23 @@ Just pure JSON.
             temperature=0.7,
             response_format={"type": "json_object"}
         )
-        
+        t_openai = time.perf_counter() - t0
+
+        t0 = time.perf_counter()
         lesson_plan = json.loads(response.choices[0].message.content)
+        t_json_parse = time.perf_counter() - t0
+
+        t_total = time.perf_counter() - t0_total
+        print(
+            "⏱️ Timing(ms) | "
+            f"template={t_template*1000:.0f} "
+            f"curriculum_load={t_curriculum_load*1000:.0f} "
+            f"curriculum_extract={t_curriculum_extract*1000:.0f} "
+            f"prompt_build={t_prompt_build*1000:.0f} "
+            f"openai={t_openai*1000:.0f} "
+            f"json_parse={t_json_parse*1000:.0f} "
+            f"total={t_total*1000:.0f}"
+        )
         print("✅ Lesson plan generated successfully")
         return lesson_plan
         
@@ -566,6 +595,7 @@ async def create_lesson_plan(request: LessonPlanRequest):
     Intelligently handles typos and missing curriculum files.
     """
     try:
+        t_req_start = time.perf_counter()
         print(f"\n{'='*60}")
         print(f"📝 New lesson plan request:")
         print(f"   Subject: {request.subject}")
@@ -575,6 +605,9 @@ async def create_lesson_plan(request: LessonPlanRequest):
         print(f"{'='*60}\n")
         
         lesson_plan = generate_lesson_plan(request)
+
+        t_req_total = time.perf_counter() - t_req_start
+        print(f"⏱️ Request total(ms): {t_req_total*1000:.0f}")
         
         return {
             "success": True,
