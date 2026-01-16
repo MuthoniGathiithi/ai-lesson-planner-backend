@@ -13,7 +13,7 @@ import time
 load_dotenv()
 
 # Initialize FastAPI
-app = FastAPI(title="CBC Lesson Plan Generator", version="2.1")
+app = FastAPI(title="CBC Lesson Plan Generator", version="3.0")
 
 # ============== CORS CONFIGURATION ==============
 origins = [
@@ -348,25 +348,41 @@ class LessonPlanRequest(BaseModel):
 
 # ============== HELPER FUNCTIONS ==============
 def load_lesson_template():
-    """Load the lesson plan template JSON"""
-    try:
-        with open('lesson_plan_template.json', 'r', encoding='utf-8') as f:
-            return json.load(f)
-    except FileNotFoundError:
-        return {
-            "lessonPlan": {
-                "administrativeDetails": {},
-                "curriculumAlignment": {},
-                "learningOutcomes": [],
-                "guidingQuestion": "",
-                "learningResources": [],
-                "lessonFlow": {
-                    "introduction": {},
-                    "development": [],
-                    "conclusion": {}
-                }
-            }
+    """Load the NEW CBC lesson plan template JSON structure"""
+    return {
+        "lessonPlan": {
+            "school": "",
+            "learningArea": "",
+            "grade": "",
+            "date": "",
+            "time": "",
+            "roll": {
+                "boys": 0,
+                "girls": 0,
+                "total": 0
+            },
+            "strand": "",
+            "subStrand": "",
+            "lessonTitle": "",
+            "specificLearningOutcomes": {
+                "statement": "By the end of this lesson, the learner should be able to:",
+                "outcomes": []
+            },
+            "keyInquiryQuestions": [],
+            "coreCompetenciesToBeDeveloped": [],
+            "linkToValues": [],
+            "linksToPCI": [],
+            "learningResources": [],
+            "suggestedLearningExperiences": {
+                "introduction": "",
+                "exploration": [],
+                "reflection": "",
+                "extension": ""
+            },
+            "suggestedParentalInvolvement": "",
+            "selfEvaluationMarks": ""
         }
+    }
 
 def find_best_match(query: str, options: List[str], threshold: int = 70) -> Optional[str]:
     """
@@ -507,7 +523,7 @@ def extract_curriculum_content(
 
 def generate_lesson_plan(request: LessonPlanRequest):
     """
-    Generate a CBC-aligned lesson plan using OpenAI with subject-specific terminology.
+    Generate a CBC-aligned lesson plan using OpenAI with NEW structure.
     """
     t0_total = time.perf_counter()
 
@@ -541,34 +557,20 @@ def generate_lesson_plan(request: LessonPlanRequest):
     # Determine if Kiswahili
     is_kiswahili = subject_guidance.get("language") == "kiswahili"
     
-    # FIX ISSUE #2: Use CORRECTED subject name from fuzzy matching
-    # Get the actual corrected subject name
+    # Get corrected names from fuzzy matching
     corrected_subject = request.subject
     if curriculum:
-        # If curriculum was loaded via fuzzy matching, get the corrected name
         curriculum_files = [f for f in os.listdir('.') if f.endswith('_curriculum.json')]
         if curriculum_files:
             available_subjects = [f.replace('_curriculum.json', '') for f in curriculum_files]
             fuzzy_match = find_best_match(request.subject.lower(), available_subjects, threshold=75)
             if fuzzy_match:
-                # Capitalize properly (first letter of each word)
                 corrected_subject = fuzzy_match.title()
                 print(f"✅ Using corrected subject name: '{request.subject}' → '{corrected_subject}'")
     
-    # Also correct strand and substrand names from curriculum matching
     corrected_strand = curriculum_content.get("strand", request.strand)
     corrected_substrand = curriculum_content.get("sub_strand", request.sub_strand)
     
-    # Prepare curriculum content strings
-    if has_curriculum_data:
-        topics_str = "\n- " + "\n- ".join(curriculum_content["topics"])
-        outcomes_str = "\n- " + "\n- ".join(curriculum_content["learning_outcomes"])
-        experiences_str = "\n- " + "\n- ".join(curriculum_content["suggested_experiences"][:3]) if curriculum_content["suggested_experiences"] else "Use your expertise to design appropriate learning experiences"
-    else:
-        topics_str = "No specific topics provided - use your expertise in this subject area"
-        outcomes_str = "Generate appropriate learning outcomes for this strand and sub-strand"
-        experiences_str = "Design engaging, age-appropriate learning experiences"
-
     # Build subject-specific guidance
     action_verbs_str = ", ".join(subject_guidance["action_verbs"][:10])
     key_terms_str = ", ".join(subject_guidance["key_terms"][:15]) if subject_guidance["key_terms"] else "subject-appropriate terms"
@@ -592,41 +594,6 @@ MAELEKEZO MAHUSUSI YA KISWAHILI:
 - Tumia maneno ya Kiswahili sahihi na sarufi nzuri
 - Anza matokeo ya kujifunza kwa vitenzi vya Kiswahili: {action_verbs_str}
 - Tumia istilahi za Kiswahili: {key_terms_str}
-- Jumuisha mifano ya methali, misemo, au vitendawili pale inapofaa
-- Andika maswali kwa Kiswahili
-- Eleza shughuli za darasa kwa Kiswahili
-- Hakikisha mpango WOTE wa somo uko kwa Kiswahili
-
-TAFSIRI ZA VICHWA VYA HABARI (TRANSLATIONS FOR SECTION HEADERS):
-- "Administrative Details" → "MAELEZO YA KIUTAWALA"
-- "School" → "Shule"
-- "Subject" → "Somo"
-- "Year" → "Mwaka"
-- "Term" → "Muhula"
-- "Date" → "Tarehe"
-- "Time" → "Muda"
-- "Grade" → "Darasa"
-- "Roll" → "Orodha ya Wanafunzi"
-- "Boys" → "Wavulana"
-- "Girls" → "Wasichana"
-- "Total" → "Jumla"
-- "Teacher Details" → "MAELEZO YA MWALIMU"
-- "Name" → "Jina"
-- "TSC Number" → "Namba ya TSC"
-- "Strand" → "MSTARI"
-- "Sub-strand" → "MSTARI MDOGO"
-- "Lesson Learning Outcomes" → "MATOKEO YA KUJIFUNZA"
-- "By the end of the lesson, the learner should be able to:" → "Mwishoni mwa somo, mwanafunzi aweze:"
-- "Key Inquiry Question" → "SWALI KUU LA UCHUNGUZI"
-- "Learning Resources" → "VIFAA VYA KUJIFUNZIA"
-- "Lesson Flow" → "MTIRIRIKO WA SOMO"
-- "Introduction" → "Utangulizi"
-- "Development" → "Maendeleo"
-- "Conclusion" → "Hitimisho"
-- "Step" → "Hatua"
-
-MUHIMU: Tumia tafsiri hizi KATIKA JSON OUTPUT. Vichwa vyote viwe kwa Kiswahili!
-
 {subject_guidance["language_style"]}
 {example_outcomes_section}
 """
@@ -649,79 +616,86 @@ Make the language specific to {corrected_subject}, not generic.
 """
 
     prompt = f"""
-You are a Kenyan secondary school teacher for grade {request.grade} preparing a COMPREHENSIVE, DETAILED CBC lesson plan.
+You are a Kenyan secondary school teacher for grade {request.grade} preparing a COMPREHENSIVE CBC lesson plan using the NEW structure.
 
 {language_instruction}
 
 CRITICAL INSTRUCTIONS:
-1. Follow the lesson plan structure EXACTLY
+1. Follow the NEW lesson plan structure EXACTLY
 2. Use SUBJECT-SPECIFIC terminology from the guidance above
-3. Write detailed descriptions with exact word counts as specified
-4. {"WRITE EVERYTHING IN KISWAHILI SANIFU - Including ALL field names, section headers, and content" if is_kiswahili else f"Use {corrected_subject}-specific language throughout"}
+3. Write detailed content with appropriate word counts
+4. {"WRITE EVERYTHING IN KISWAHILI SANIFU" if is_kiswahili else f"Use {corrected_subject}-specific language throughout"}
 
-LESSON PLAN TEMPLATE:
+NEW LESSON PLAN TEMPLATE STRUCTURE:
 {json.dumps(template, indent=2)}
 
-ADMINISTRATIVE DETAILS {"(MAELEZO YA KIUTAWALA - Write field names in Kiswahili!)" if is_kiswahili else ""}:
-{"Shule" if is_kiswahili else "School"}: {request.school}
-{"Somo" if is_kiswahili else "Subject"}: {corrected_subject}
-{"Mwaka" if is_kiswahili else "Year"}: {request.date.split('-')[0]}
-{"Muhula" if is_kiswahili else "Term"}: {request.term}
-{"Tarehe" if is_kiswahili else "Date"}: {request.date}
-{"Muda" if is_kiswahili else "Time"}: {request.start_time} - {request.end_time}
-{"Darasa" if is_kiswahili else "Grade"}: {request.grade}
-{"Orodha ya Wanafunzi" if is_kiswahili else "Roll"}: {"Wavulana" if is_kiswahili else "Boys"}: {request.boys}, {"Wasichana" if is_kiswahili else "Girls"}: {request.girls}, {"Jumla" if is_kiswahili else "Total"}: {total_students}
+FILL IN THESE DETAILS:
 
-TEACHER DETAILS {"(MAELEZO YA MWALIMU)" if is_kiswahili else ""}:
-{"Jina" if is_kiswahili else "Name"}: {request.teacher_name}
-{"Namba ya TSC" if is_kiswahili else "TSC Number"}: {request.teacher_tsc_number}
+BASIC INFORMATION:
+School: {request.school}
+Learning Area: {corrected_subject}
+Grade: {request.grade}
+Date: {request.date}
+Time: {request.start_time} - {request.end_time}
+Roll: Boys: {request.boys}, Girls: {request.girls}, Total: {total_students}
 
-CURRICULUM DETAILS {"(Tumia majina yaliyosahihishwa!)" if is_kiswahili else "(Use corrected names!)"}:
-{"Mstari" if is_kiswahili else "Strand"}: {corrected_strand}
-{"Mstari Mdogo" if is_kiswahili else "Sub-strand"}: {corrected_substrand}
+CURRICULUM ALIGNMENT:
+Strand: {corrected_strand}
+Sub-strand: {corrected_substrand}
 
-LESSON LEARNING OUTCOMES {"(MATOKEO YA KUJIFUNZA)" if is_kiswahili else ""}:
-Write THREE detailed, measurable outcomes.
-{"Start with Kiswahili action verbs: " + action_verbs_str if is_kiswahili else f"Start with {corrected_subject}-specific action verbs: " + action_verbs_str}
-Each outcome MUST be EXACTLY 20 WORDS.
+LESSON TITLE (10-15 WORDS):
+Create an engaging title for this lesson about {corrected_substrand}{"kwa Kiswahili" if is_kiswahili else f" using {corrected_subject} terminology"}.
 
-Format:
-{"Mwishoni mwa somo, mwanafunzi aweze:" if is_kiswahili else "By the end of the lesson, the learner should be able to:"}
-a) [20 WORDS {"- Kiswahili" if is_kiswahili else f"- {corrected_subject} terminology"}]
-b) [20 WORDS {"- Kiswahili" if is_kiswahili else f"- {corrected_subject} terminology"}]
-c) [20 WORDS {"- Kiswahili" if is_kiswahili else f"- {corrected_subject} terminology"}]
+SPECIFIC LEARNING OUTCOMES (3 outcomes, EXACTLY 20 WORDS EACH):
+{"Mwishoni mwa somo hili, mwanafunzi aweze:" if is_kiswahili else "By the end of this lesson, the learner should be able to:"}
+a) [20 WORDS {"- Kiswahili verbs" if is_kiswahili else f"- Start with: {action_verbs_str}"}]
+b) [20 WORDS {"- Kiswahili verbs" if is_kiswahili else f"- Start with: {action_verbs_str}"}]
+c) [20 WORDS {"- Kiswahili verbs" if is_kiswahili else f"- Start with: {action_verbs_str}"}]
 
-KEY INQUIRY QUESTION {"(SWALI KUU LA UCHUNGUZI)" if is_kiswahili else ""} (MAXIMUM 10 WORDS):
-{"Kwa Kiswahili, " if is_kiswahili else f"Using {corrected_subject} terminology, "}write a thought-provoking question about {corrected_substrand}.
+KEY INQUIRY QUESTIONS (2-3 questions, MAX 10 WORDS EACH):
+1) [Question about the topic]
+2) [Thought-provoking question]
 
-LEARNING RESOURCES {"(VIFAA VYA KUJIFUNZIA)" if is_kiswahili else ""} (4-6 items):
-List specific resources {"kwa Kiswahili" if is_kiswahili else f"relevant to {corrected_subject}"}.
+CORE COMPETENCIES TO BE DEVELOPED (3-4 competencies):
+List CBC core competencies like: Communication, Critical thinking, Creativity, etc.
 
-LESSON FLOW {"(MTIRIRIKO WA SOMO)" if is_kiswahili else ""}:
+LINK TO VALUES (2-3 values):
+List CBC values like: Respect, Responsibility, Unity, etc.
 
-{"UTANGULIZI" if is_kiswahili else "INTRODUCTION"} (MAXIMUM 10 WORDS):
-Describe the opening activity{"kwa Kiswahili" if is_kiswahili else f" using {corrected_subject} context"}.
+LINKS TO PERTINENT AND CONTEMPORARY ISSUES (PCI) (2-3 items):
+Examples: Environmental conservation, Health education, Financial literacy, etc.
 
-{"MAENDELEO" if is_kiswahili else "DEVELOPMENT"} (3-5 {"HATUA" if is_kiswahili else "STEPS"}, ~20 WORDS EACH):
-Describe each {"hatua" if is_kiswahili else "step"}{"kwa Kiswahili" if is_kiswahili else f" with {corrected_subject}-specific activities"}.
+LEARNING RESOURCES (4-6 items):
+List specific {"vifaa" if is_kiswahili else "resources"} relevant to {corrected_subject}.
 
-{"HITIMISHO" if is_kiswahili else "CONCLUSION"} (MAXIMUM 15 WORDS):
-Describe how learners summarize{"kwa Kiswahili" if is_kiswahili else f" using {corrected_subject} concepts"}.
+SUGGESTED LEARNING EXPERIENCES:
+
+i) INTRODUCTION/GETTING STARTED (15-20 WORDS):
+Describe how to {"fungua somo" if is_kiswahili else "start the lesson"}.
+
+ii) EXPLORATION/LESSON DEVELOPMENT (4 steps, ~25 WORDS EACH):
+Step 1: [Activity description]
+Step 2: [Activity description]
+Step 3: [Activity description]
+Step 4: [Activity description]
+
+iii) REFLECTION (15-20 WORDS):
+How learners {"wafikiri kuhusu" if is_kiswahili else "reflect on"} what they learned.
+
+iv) EXTENSION (15-20 WORDS):
+Additional {"shughuli" if is_kiswahili else "activities"} for further learning.
+
+SUGGESTED PARENTAL INVOLVEMENT/COMMUNITY SERVICE LEARNING (20-30 WORDS):
+Describe how parents/community can support this lesson.
+
+SELF-EVALUATION MARKS:
+Provide brief evaluation criteria or space for teacher self-assessment.
 
 JSON OUTPUT REQUIREMENTS:
-⚠️ Subject field MUST contain: "{corrected_subject}" (NOT "{request.subject}")
-⚠️ Strand field MUST contain: "{corrected_strand}" (NOT "{request.strand}")
-⚠️ SubStrand field MUST contain: "{corrected_substrand}" (NOT "{request.sub_strand}")
-{"⚠️ ALL SECTION HEADERS AND FIELD NAMES IN KISWAHILI!" if is_kiswahili else f"⚠️ Use {corrected_subject.upper()} terminology!"}
-{"⚠️ Example: Use 'Shule' not 'School', 'Tarehe' not 'Date', 'Mwalimu' not 'Teacher'" if is_kiswahili else ""}
-
-QUALITY STANDARDS:
-✅ Subject: "{corrected_subject}" (corrected from "{request.subject}")
-✅ Strand: "{corrected_strand}" (corrected from "{request.strand}")
-✅ SubStrand: "{corrected_substrand}" (corrected from "{request.sub_strand}")
-{"✅ ALL field labels in Kiswahili (Shule, Somo, Tarehe, Muda, etc.)" if is_kiswahili else ""}
-{"✅ Section headers in Kiswahili (MAELEZO YA KIUTAWALA, MATOKEO YA KUJIFUNZA, etc.)" if is_kiswahili else ""}
-{"✅ ENTIRE CONTENT in Kiswahili sanifu" if is_kiswahili else f"✅ {corrected_subject}-specific terminology throughout"}
+⚠️ learningArea field MUST contain: "{corrected_subject}" (NOT "{request.subject}")
+⚠️ strand field MUST contain: "{corrected_strand}"
+⚠️ subStrand field MUST contain: "{corrected_substrand}"
+{"⚠️ ALL CONTENT IN KISWAHILI!" if is_kiswahili else f"⚠️ Use {corrected_subject.upper()} terminology!"}
 
 Return ONLY valid JSON. No markdown. No explanations.
 """
@@ -729,12 +703,8 @@ Return ONLY valid JSON. No markdown. No explanations.
     t_prompt_build = time.perf_counter() - t0
 
     try:
-        print(f"🤖 Generating lesson plan for {corrected_subject} - Grade {request.grade}")
-        print(f"   Original input: Subject='{request.subject}', Strand='{request.strand}', Sub-strand='{request.sub_strand}'")
-        print(f"   Corrected to: Subject='{corrected_subject}', Strand='{corrected_strand}', Sub-strand='{corrected_substrand}'")
-        print(f"🎯 Subject-specific guidance: Active")
-        if is_kiswahili:
-            print(f"🌍 Language: KISWAHILI (Full translation enabled)")
+        print(f"🤖 Generating NEW structure lesson plan for {corrected_subject} - Grade {request.grade}")
+        print(f"   Using corrected names: Subject='{corrected_subject}', Strand='{corrected_strand}', Sub-strand='{corrected_substrand}'")
 
         t0 = time.perf_counter()
         response = client.chat.completions.create(
@@ -742,7 +712,7 @@ Return ONLY valid JSON. No markdown. No explanations.
             messages=[
                 {
                     "role": "system",
-                    "content": f"You are an expert Kenyan CBC teacher who creates detailed lesson plans with subject-specific terminology.{' For Kiswahili lessons, you write EVERYTHING in Kiswahili sanifu including ALL field names (Shule, Somo, Tarehe, Muda, etc.), section headers (MAELEZO YA KIUTAWALA, MATOKEO YA KUJIFUNZA, etc.), and all content.' if is_kiswahili else ''}"
+                    "content": f"You are an expert Kenyan CBC teacher who creates detailed lesson plans following the NEW CBC structure.{' For Kiswahili lessons, you write EVERYTHING in Kiswahili sanifu.' if is_kiswahili else ''}"
                 },
                 {
                     "role": "user",
@@ -760,7 +730,7 @@ Return ONLY valid JSON. No markdown. No explanations.
 
         t_total = time.perf_counter() - t0_total
         print(f"⏱️ Total: {t_total*1000:.0f}ms")
-        print("✅ Lesson plan generated successfully")
+        print("✅ NEW structure lesson plan generated successfully")
         return lesson_plan
     except Exception as e:
         print(f"❌ Error: {str(e)}")
@@ -770,9 +740,10 @@ Return ONLY valid JSON. No markdown. No explanations.
 @app.get("/")
 def read_root():
     return {
-        "message": "CBC Lesson Plan Generator - Enhanced",
-        "version": "2.1",
+        "message": "CBC Lesson Plan Generator - NEW Structure",
+        "version": "3.0",
         "features": [
+            "NEW CBC lesson plan structure",
             "Subject-specific terminology",
             "Kiswahili lesson support",
             "Fuzzy matching for typos"
@@ -786,7 +757,7 @@ async def create_lesson_plan(request: LessonPlanRequest):
         lesson_plan = generate_lesson_plan(request)
         return {
             "success": True,
-            "message": "Lesson plan generated with subject-specific terminology",
+            "message": "NEW structure lesson plan generated with subject-specific terminology",
             "lesson_plan": lesson_plan
         }
     except Exception as e:
@@ -797,6 +768,8 @@ def health_check():
     curriculum_files = [f for f in os.listdir('.') if f.endswith('_curriculum.json')]
     return {
         "status": "healthy",
+        "version": "3.0",
+        "structure": "NEW CBC format",
         "features": {
             "subject_terminology": "enabled",
             "kiswahili_support": "enabled",
@@ -809,6 +782,6 @@ def health_check():
 if __name__ == "__main__":
     import uvicorn
     port = int(os.getenv("PORT", 8000))
-    print(f"\n🚀 CBC Lesson Plan Generator (Enhanced) on port {port}")
+    print(f"\n🚀 CBC Lesson Plan Generator (NEW Structure v3.0) on port {port}")
     print(f"📚 Supported subjects: {', '.join(SUBJECT_TERMINOLOGY.keys())}")
     uvicorn.run(app, host="0.0.0.0", port=port)
