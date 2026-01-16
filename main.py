@@ -335,12 +335,9 @@ class LessonPlanRequest(BaseModel):
     subject: str
     class_name: str
     grade: int
-    term: int
     date: str
     start_time: str
     end_time: str
-    teacher_name: str
-    teacher_tsc_number: str
     boys: int
     girls: int
     strand: str
