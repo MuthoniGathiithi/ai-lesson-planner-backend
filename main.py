@@ -8,6 +8,7 @@ import json
 from typing import List, Optional, Dict, Any
 from rapidfuzz import fuzz, process
 import time
+from functools import lru_cache
 
 # Load environment variables
 load_dotenv()
@@ -40,6 +41,18 @@ app.add_middleware(
 
 # Initialize OpenAI
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
+
+@lru_cache(maxsize=1)
+def get_curriculum_files() -> List[str]:
+    return [f for f in os.listdir('.') if f.endswith('_curriculum.json')]
+
+
+@lru_cache(maxsize=128)
+def load_curriculum_cached(subject_lower: str) -> Optional[Dict[str, Any]]:
+    filename = f"{subject_lower}_curriculum.json"
+    with open(filename, 'r', encoding='utf-8') as f:
+        return json.load(f)
 
 # ============== SUBJECT-SPECIFIC TERMINOLOGY ==============
 SUBJECT_TERMINOLOGY = {
@@ -400,23 +413,20 @@ def load_curriculum(subject: str) -> Optional[Dict[str, Any]]:
     Load curriculum JSON file for a subject with smart name matching.
     """
     try:
-        filename = f"{subject.lower()}_curriculum.json"
-        with open(filename, 'r', encoding='utf-8') as f:
-            curriculum = json.load(f)
-        print(f"✅ Successfully loaded curriculum file: {filename}")
+        subject_lower = subject.lower()
+        curriculum = load_curriculum_cached(subject_lower)
+        print(f"✅ Successfully loaded curriculum file: {subject_lower}_curriculum.json")
         return curriculum
     except FileNotFoundError:
         print(f"⚠️ Curriculum file '{subject.lower()}_curriculum.json' not found. Trying fuzzy match...")
-        curriculum_files = [f for f in os.listdir('.') if f.endswith('_curriculum.json')]
+        curriculum_files = get_curriculum_files()
         if curriculum_files:
             available_subjects = [f.replace('_curriculum.json', '') for f in curriculum_files]
             best_match = find_best_match(subject.lower(), available_subjects, threshold=75)
             if best_match:
                 try:
-                    filename = f"{best_match}_curriculum.json"
-                    with open(filename, 'r', encoding='utf-8') as f:
-                        curriculum = json.load(f)
-                    print(f"✅ Fuzzy matched '{subject}' to '{best_match}' and loaded {filename}")
+                    curriculum = load_curriculum_cached(best_match)
+                    print(f"✅ Fuzzy matched '{subject}' to '{best_match}' and loaded {best_match}_curriculum.json")
                     return curriculum
                 except Exception as e:
                     print(f"❌ Error loading fuzzy matched file: {str(e)}")
@@ -557,7 +567,7 @@ def generate_lesson_plan(request: LessonPlanRequest):
     # Get corrected names from fuzzy matching
     corrected_subject = request.subject
     if curriculum:
-        curriculum_files = [f for f in os.listdir('.') if f.endswith('_curriculum.json')]
+        curriculum_files = get_curriculum_files()
         if curriculum_files:
             available_subjects = [f.replace('_curriculum.json', '') for f in curriculum_files]
             fuzzy_match = find_best_match(request.subject.lower(), available_subjects, threshold=75)
@@ -613,7 +623,7 @@ Make the language specific to {corrected_subject}, not generic.
 """
 
     prompt = f"""
-You are a Kenyan secondary school teacher for grade {request.grade} preparing a COMPREHENSIVE CBC lesson plan using the NEW structure.
+You are a Kenyan secondary school teacher for grade {request.grade} preparing a CBC lesson plan using the NEW structure.
 
 {language_instruction}
 
@@ -624,7 +634,7 @@ CRITICAL INSTRUCTIONS:
 4. {"WRITE EVERYTHING IN KISWAHILI SANIFU" if is_kiswahili else f"Use {corrected_subject}-specific language throughout"}
 
 NEW LESSON PLAN TEMPLATE STRUCTURE:
-{json.dumps(template, indent=2)}
+{json.dumps(template, separators=(",", ":"))}
 
 FILL IN THESE DETAILS:
 
@@ -676,11 +686,11 @@ Step 2: [Activity description]
 Step 3: [Activity description]
 Step 4: [Activity description]
 
-iii) REFLECTION (15-20 WORDS):
-How learners {"wafikiri kuhusu" if is_kiswahili else "reflect on"} what they learned.
+iii) REFLECTION/CONCLUSION (15-20 WORDS):
+Describe how to {"hitimisha somo" if is_kiswahili else "conclude the lesson"}.
 
-iv) EXTENSION (15-20 WORDS):
-Additional {"shughuli" if is_kiswahili else "activities"} for further learning.
+iv) EXTENSION/HOMEWORK (15-20 WORDS):
+Describe what learners should do at home.
 
 SUGGESTED PARENTAL INVOLVEMENT/COMMUNITY SERVICE LEARNING (20-30 WORDS):
 Describe how parents/community can support this lesson.
@@ -716,7 +726,7 @@ Return ONLY valid JSON. No markdown. No explanations.
                     "content": prompt
                 }
             ],
-            temperature=0.7,
+            temperature=0.5,
             response_format={"type": "json_object"}
         )
         t_openai = time.perf_counter() - t0
@@ -726,7 +736,17 @@ Return ONLY valid JSON. No markdown. No explanations.
         t_json_parse = time.perf_counter() - t0
 
         t_total = time.perf_counter() - t0_total
-        print(f"⏱️ Total: {t_total*1000:.0f}ms")
+        print(
+            "⏱️ Timings(ms): "
+            f"template={t_template*1000:.0f}, "
+            f"curriculum_load={t_curriculum_load*1000:.0f}, "
+            f"curriculum_extract={t_curriculum_extract*1000:.0f}, "
+            f"subject_guidance={t_subject_guidance*1000:.0f}, "
+            f"prompt_build={t_prompt_build*1000:.0f}, "
+            f"openai={t_openai*1000:.0f}, "
+            f"json_parse={t_json_parse*1000:.0f}, "
+            f"total={t_total*1000:.0f}"
+        )
         print("✅ NEW structure lesson plan generated successfully")
         return lesson_plan
     except Exception as e:
@@ -762,7 +782,7 @@ async def create_lesson_plan(request: LessonPlanRequest):
 
 @app.get("/health")
 def health_check():
-    curriculum_files = [f for f in os.listdir('.') if f.endswith('_curriculum.json')]
+    curriculum_files = get_curriculum_files()
     return {
         "status": "healthy",
         "version": "3.0",
