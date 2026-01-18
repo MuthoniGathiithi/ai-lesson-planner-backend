@@ -387,7 +387,8 @@ def load_lesson_template():
                 "introduction": "",
                 "exploration": [],
                 "reflection": "",
-                "extension": ""
+                "extension": "",
+                "conclusion": ""
             },
             "suggestedParentalInvolvement": "",
             "selfEvaluationMarks": ""
@@ -686,11 +687,14 @@ Step 2: [Activity description]
 Step 3: [Activity description]
 Step 4: [Activity description]
 
-iii) REFLECTION/CONCLUSION (15-20 WORDS):
-Describe how to {"hitimisha somo" if is_kiswahili else "conclude the lesson"}.
+iii) REFLECTION (15-20 WORDS):
+Describe how learners {"wafikiria" if is_kiswahili else "reflect on"} what they learned.
 
 iv) EXTENSION/HOMEWORK (15-20 WORDS):
 Describe what learners should do at home.
+
+v) CONCLUSION (15-20 WORDS):
+Describe how to {"hitimisha somo" if is_kiswahili else "conclude and summarize the lesson"}.
 
 SUGGESTED PARENTAL INVOLVEMENT/COMMUNITY SERVICE LEARNING (20-30 WORDS):
 Describe how parents/community can support this lesson.
