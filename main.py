@@ -697,10 +697,17 @@ v) CONCLUSION (15-20 WORDS):
 Describe how to {"hitimisha somo" if is_kiswahili else "conclude and summarize the lesson"}.
 
 SUGGESTED PARENTAL INVOLVEMENT/COMMUNITY SERVICE LEARNING (20-30 WORDS):
-Describe how parents/community can support this lesson.
+Describe how parents/community can support this lesson by providing resources or a trip or aid students in intel about waht they know about it .
 
-SELF-EVALUATION MARKS:
-Provide brief evaluation criteria or space for teacher self-assessment.
+SELF-EVALUATION MARKS (15-17 WORDS):
+Write a complete paragraph with specific teacher self-evaluation criteria covering:
+- Lesson delivery effectiveness and clarity of explanations given to learners
+- Student engagement levels, participation quality, and attentiveness during lesson
+- Achievement of the stated specific learning outcomes by learners
+- Time management and appropriate lesson pacing throughout the 40-minute period
+- Specific areas for improvement in future lessons on this topic
+IMPORTANT: Generate actual evaluation criteria text. DO NOT leave this field empty.
+
 
 JSON OUTPUT REQUIREMENTS:
 ⚠️ learningArea field MUST contain: "{corrected_subject}" (NOT "{request.subject}")
