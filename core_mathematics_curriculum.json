@@ -1,0 +1,145 @@
+{
+  "subject": "Mathematics",
+  "curriculum": "Competency Based Curriculum (CBC)",
+  "country": "Kenya",
+  "level": "Senior Secondary",
+  "strands": [
+    {
+      "id": 1,
+      "name": "Numbers and Algebra",
+      "code": "1.0",
+      "sub_strands": [
+        {
+          "id": "1.1",
+          "name": "Real Numbers",
+          "topics": [
+            "Classification of numbers",
+            "Reciprocal of numbers"
+          ],
+          "specific_learning_outcomes": [
+            "Classify whole numbers as odd, even, prime and composite in different situations",
+            "Classify real numbers as rational and irrational in different situations",
+            "Determine the reciprocal of real numbers by division",
+            "Determine the reciprocal of real numbers by use of mathematical tables and calculators",
+            "Apply reciprocal of real numbers in mathematical computations",
+            "Promote the use of real numbers in day-to-day activities"
+          ],
+          "key_inquiry_questions": [
+            "How do we use real numbers in day-to-day activities?"
+          ],
+          "suggested_learning_experiences": [
+            "Discuss with peers to identify and categorise whole numbers as odd, even, prime and composite",
+            "Discuss in a group the meaning of real numbers",
+            "Categorise real numbers as rational and irrational numbers",
+            "Work out the reciprocal of real numbers by division",
+            "Read the values of the reciprocals of real numbers from mathematical tables",
+            "Work out the reciprocal of real numbers using a calculator",
+            "Use reciprocal of real numbers to work out tasks",
+            "Use digital devices or other resources such as books to work out the reciprocal of real numbers"
+          ],
+          "core_competencies": [
+            "Communication and Collaboration: The learner discusses with peers to identify and categorise whole numbers as odd, even, prime, composite, rational, and irrational",
+            "Critical Thinking and Problem Solving: The learner uses the reciprocal of real numbers to work out mathematical tasks",
+            "Digital Literacy: The learner works out the reciprocal of real numbers from calculators and other digital devices"
+          ],
+          "values": [
+            "Unity: The learner discusses in a group and categorises real numbers as rational and irrational numbers",
+            "Responsibility: The learner takes care of calculators and mathematical tables when working out the reciprocal of real numbers"
+          ],
+          "pertinent_and_contemporary_issues": [
+            "Life Skills (self-esteem): The learner participates in the discussion on the concepts of rational and irrational numbers"
+          ],
+          "key_concepts": "Real numbers include rational and irrational numbers. Numbers can be classified as odd, even, prime, and composite. The reciprocal of a number is obtained by division or using mathematical tables and calculators."
+        },
+        {
+          "id": "1.2",
+          "name": "Indices and Logarithms",
+          "topics": [
+            "Indices",
+            "Logarithms to base 10",
+            "Application of indices and logarithms"
+          ],
+          "specific_learning_outcomes": [
+            "Express numbers in index form",
+            "Derive the laws of indices using factors",
+            "Apply the laws of indices in different situations",
+            "Relate index notation to logarithm notation to base 10",
+            "Determine common logarithms of numbers from mathematical tables and calculators",
+            "Apply common logarithms in multiplication, division, powers and roots of numbers",
+            "Appreciate the use of indices and common logarithms in mathematical computations"
+          ],
+          "key_inquiry_questions": [
+            "Why do we use indices and logarithms?"
+          ],
+          "suggested_learning_experiences": [
+            "Write numbers in terms of bases and indices and share them with peers",
+            "Discuss in a group and generate the laws of indices",
+            "Use the laws of indices to work out mathematical computations",
+            "Discuss in a group and relate index notation to logarithm notation to base 10",
+            "Read and obtain common logarithms of numbers from tables and calculators",
+            "Use common logarithms of numbers to work out mathematical tasks",
+            "Use digital devices or other resources to work out mathematical tasks involving common logarithms"
+          ],
+          "core_competencies": [
+            "Learning to Learn: The learner discusses in a group and generates the laws of indices",
+            "Digital Literacy: The learner reads and obtains common logarithms of numbers from tables and calculators"
+          ],
+          "values": [
+            "Responsibility: The learner takes care of mathematical tables and calculators",
+            "Respect: The learner appreciates the input of others while discussing in a group and relating powers of 10 to common logarithms"
+          ],
+          "pertinent_and_contemporary_issues": [
+            "Life Skills (self-awareness): The learner discusses in a group and relates powers of 10 to common logarithms and identifies the base"
+          ],
+          "key_concepts": "Indices express repeated multiplication in compact form. Logarithms are the inverse of exponential functions. The laws of indices govern operations with powers. Common logarithms use base 10 and can be determined using tables and calculators."
+        },
+        {
+          "id": "1.3",
+          "name": "Quadratic Expressions and Equations",
+          "topics": [
+            "Quadratic expressions",
+            "Quadratic identities",
+            "Factorisation of quadratic expressions",
+            "Formation of quadratic equations",
+            "Solution of quadratic equations by factorisation",
+            "Application of quadratic equations to real-life situations"
+          ],
+          "specific_learning_outcomes": [
+            "Form quadratic expressions from different situations",
+            "Derive the quadratic identities from the concept of area",
+            "Apply quadratic identities in numerical cases",
+            "Factorise quadratic expressions from different situations",
+            "Form quadratic equations in different situations",
+            "Solve quadratic equations by factorisation",
+            "Apply quadratic equations to real life situations",
+            "Appreciate the use of quadratic equations in real life situations"
+          ],
+          "key_inquiry_questions": [
+            "How do we use equations in daily life?"
+          ],
+          "suggested_learning_experiences": [
+            "Generate quadratic expressions from given statements",
+            "Discuss with peers and come up with quadratic identities and write them on a chart",
+            "Discuss and use quadratic identities to evaluate numerical cases",
+            "Discuss and work out factors of quadratic expressions",
+            "Work with peers to form quadratic equations from roots, statement and real-life cases",
+            "Work out factors of quadratic equations to obtain solutions to the equations",
+            "Search on the use of quadratic equations using digital devices or other resources"
+          ],
+          "core_competencies": [
+            "Critical Thinking and Problem Solving: The learner interprets statements to form and solve quadratic equations to get solutions to real-life cases",
+            "Communication and Collaboration: The learner discusses with peers and comes up with quadratic identities"
+          ],
+          "values": [
+            "Unity: The learner works with others to write quadratic identities on a chart",
+            "Respect: The learner works with peers to form and solve quadratic equations to get solutions to real-life cases"
+          ],
+          "pertinent_and_contemporary_issues": [
+            "Socio-economic and environmental issues (social cohesion): The learner works with peers to form and solve quadratic equations to get solutions to real-life cases"
+          ],
+          "key_concepts": "Quadratic expressions are algebraic expressions of degree 2. Quadratic identities can be derived from geometric concepts of area. Quadratic equations can be solved by factorisation. Quadratic equations have practical applications in real-life situations."
+        }
+      ]
+    }
+  ]
+}
