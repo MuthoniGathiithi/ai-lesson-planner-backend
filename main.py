@@ -49,8 +49,9 @@ def get_curriculum_files() -> List[str]:
 
 
 @lru_cache(maxsize=128)
-def load_curriculum_cached(subject_lower: str) -> Optional[Dict[str, Any]]:
-    filename = f"{subject_lower}_curriculum.json"
+def load_curriculum_cached(subject_normalized: str) -> Optional[Dict[str, Any]]:
+    """Load curriculum from normalized filename (with underscores instead of spaces)"""
+    filename = f"{subject_normalized}_curriculum.json"
     with open(filename, 'r', encoding='utf-8') as f:
         return json.load(f)
 
@@ -412,18 +413,22 @@ def find_best_match(query: str, options: List[str], threshold: int = 70) -> Opti
 def load_curriculum(subject: str) -> Optional[Dict[str, Any]]:
     """
     Load curriculum JSON file for a subject with smart name matching.
+    Normalizes spaces to underscores for filename matching.
     """
     try:
-        subject_lower = subject.lower()
-        curriculum = load_curriculum_cached(subject_lower)
-        print(f"✅ Successfully loaded curriculum file: {subject_lower}_curriculum.json")
+        # ✅ FIX: Normalize subject name - replace spaces with underscores
+        subject_normalized = subject.lower().strip().replace(" ", "_")
+        curriculum = load_curriculum_cached(subject_normalized)
+        print(f"✅ Successfully loaded curriculum file: {subject_normalized}_curriculum.json")
         return curriculum
     except FileNotFoundError:
         print(f"⚠️ Curriculum file '{subject.lower()}_curriculum.json' not found. Trying fuzzy match...")
         curriculum_files = get_curriculum_files()
         if curriculum_files:
             available_subjects = [f.replace('_curriculum.json', '') for f in curriculum_files]
-            best_match = find_best_match(subject.lower(), available_subjects, threshold=75)
+            # Also normalize for fuzzy matching
+            subject_normalized = subject.lower().strip().replace(" ", "_")
+            best_match = find_best_match(subject_normalized, available_subjects, threshold=75)
             if best_match:
                 try:
                     curriculum = load_curriculum_cached(best_match)
@@ -571,9 +576,12 @@ def generate_lesson_plan(request: LessonPlanRequest):
         curriculum_files = get_curriculum_files()
         if curriculum_files:
             available_subjects = [f.replace('_curriculum.json', '') for f in curriculum_files]
-            fuzzy_match = find_best_match(request.subject.lower(), available_subjects, threshold=75)
+            # Normalize for matching
+            subject_normalized = request.subject.lower().replace(" ", "_")
+            fuzzy_match = find_best_match(subject_normalized, available_subjects, threshold=75)
             if fuzzy_match:
-                corrected_subject = fuzzy_match.title()
+                # Convert back to display format (replace underscores with spaces, title case)
+                corrected_subject = fuzzy_match.replace("_", " ").title()
                 print(f"✅ Using corrected subject name: '{request.subject}' → '{corrected_subject}'")
     
     corrected_strand = curriculum_content.get("strand", request.strand)
@@ -623,16 +631,43 @@ CRITICAL: All learning outcomes MUST use action verbs from the list above.
 Make the language specific to {corrected_subject}, not generic.
 """
 
+    # ✅ ENHANCED: Add curriculum content to prompt if available
+    curriculum_section = ""
+    if has_curriculum_data:
+        curriculum_section = f"""
+📚 CURRICULUM CONTENT FROM {corrected_subject.upper()} CURRICULUM FILE:
+
+TOPICS COVERED:
+{chr(10).join(f"- {topic}" for topic in curriculum_content.get("topics", []))}
+
+SPECIFIC LEARNING OUTCOMES FROM CURRICULUM:
+{chr(10).join(f"- {outcome}" for outcome in curriculum_content.get("learning_outcomes", [])[:5])}
+
+KEY CONCEPTS:
+{curriculum_content.get("key_concepts", "N/A")}
+
+KEY INQUIRY QUESTIONS FROM CURRICULUM:
+{chr(10).join(f"- {q}" for q in curriculum_content.get("key_inquiry_questions", []))}
+
+SUGGESTED EXPERIENCES FROM CURRICULUM:
+{chr(10).join(f"- {exp}" for exp in curriculum_content.get("suggested_experiences", [])[:3])}
+
+⚠️ IMPORTANT: Use the above curriculum content as PRIMARY REFERENCE. Align the lesson plan with these official curriculum outcomes and concepts.
+"""
+
     prompt = f"""
 You are a Kenyan secondary school teacher for grade {request.grade} preparing a CBC lesson plan using the NEW structure.
 
 {language_instruction}
 
+{curriculum_section}
+
 CRITICAL INSTRUCTIONS:
 1. Follow the NEW lesson plan structure EXACTLY
 2. Use SUBJECT-SPECIFIC terminology from the guidance above
-3. Write detailed content with appropriate word counts
-4. {"WRITE EVERYTHING IN KISWAHILI SANIFU" if is_kiswahili else f"Use {corrected_subject}-specific language throughout"}
+3. {"✅ ALIGN WITH THE CURRICULUM CONTENT PROVIDED ABOVE" if has_curriculum_data else "Use general knowledge for this subject"}
+4. Write detailed content with appropriate word counts
+5. {"WRITE EVERYTHING IN KISWAHILI SANIFU" if is_kiswahili else f"Use {corrected_subject}-specific language throughout"}
 
 NEW LESSON PLAN TEMPLATE STRUCTURE:
 {json.dumps(template, separators=(",", ":"))}
@@ -656,18 +691,22 @@ Create an engaging title for this lesson about {corrected_substrand}{"kwa Kiswah
 
 SPECIFIC LEARNING OUTCOMES (3 outcomes, EXACTLY 20 WORDS EACH):
 {"Mwishoni mwa somo hili, mwanafunzi aweze:" if is_kiswahili else "By the end of this lesson, the learner should be able to:"}
+{"⚠️ BASE THESE ON THE CURRICULUM OUTCOMES ABOVE" if has_curriculum_data else ""}
 a) [20 WORDS {"- Kiswahili verbs" if is_kiswahili else f"- Start with: {action_verbs_str}"}]
 b) [20 WORDS {"- Kiswahili verbs" if is_kiswahili else f"- Start with: {action_verbs_str}"}]
 c) [20 WORDS {"- Kiswahili verbs" if is_kiswahili else f"- Start with: {action_verbs_str}"}]
 
 KEY INQUIRY QUESTIONS (2-3 questions, MAX 10 WORDS EACH):
+{"⚠️ USE THE CURRICULUM INQUIRY QUESTIONS ABOVE AS REFERENCE" if has_curriculum_data else ""}
 1) [Question about the topic]
 2) [Thought-provoking question]
 
 CORE COMPETENCIES TO BE DEVELOPED (3-4 competencies):
+{"⚠️ REFERENCE THE CURRICULUM COMPETENCIES ABOVE" if has_curriculum_data else ""}
 List CBC core competencies like: Communication, Critical thinking, Creativity, etc.
 
 LINK TO VALUES (2-3 values):
+{"⚠️ REFERENCE THE CURRICULUM VALUES ABOVE" if has_curriculum_data else ""}
 List CBC values like: Respect, Responsibility, Unity, etc.
 
 LINKS TO PERTINENT AND CONTEMPORARY ISSUES (PCI) (2-3 items):
@@ -679,9 +718,11 @@ List specific {"vifaa" if is_kiswahili else "resources"} relevant to {corrected_
 SUGGESTED LEARNING EXPERIENCES:
 
 i) INTRODUCTION/GETTING STARTED (15-20 WORDS):
+{"⚠️ ALIGN WITH CURRICULUM EXPERIENCES ABOVE" if has_curriculum_data else ""}
 Describe how to {"fungua somo" if is_kiswahili else "start the lesson"}.
 
 ii) EXPLORATION/LESSON DEVELOPMENT (4 steps, ~25 WORDS EACH):
+{"⚠️ USE CURRICULUM SUGGESTED EXPERIENCES AS GUIDE" if has_curriculum_data else ""}
 Step 1: [Activity description]
 Step 2: [Activity description]
 Step 3: [Activity description]
@@ -723,6 +764,8 @@ Return ONLY valid JSON. No markdown. No explanations.
     try:
         print(f"🤖 Generating NEW structure lesson plan for {corrected_subject} - Grade {request.grade}")
         print(f"   Using corrected names: Subject='{corrected_subject}', Strand='{corrected_strand}', Sub-strand='{corrected_substrand}'")
+        if has_curriculum_data:
+            print(f"   ✅ Using curriculum file content with {len(curriculum_content.get('topics', []))} topics")
 
         t0 = time.perf_counter()
         response = client.chat.completions.create(
@@ -730,7 +773,7 @@ Return ONLY valid JSON. No markdown. No explanations.
             messages=[
                 {
                     "role": "system",
-                    "content": f"You are an expert Kenyan CBC teacher who creates detailed lesson plans following the NEW CBC structure.{' For Kiswahili lessons, you write EVERYTHING in Kiswahili sanifu.' if is_kiswahili else ''}"
+                    "content": f"You are an expert Kenyan CBC teacher who creates detailed lesson plans following the NEW CBC structure.{' For Kiswahili lessons, you write EVERYTHING in Kiswahili sanifu.' if is_kiswahili else ''} You ALWAYS align lesson plans with official curriculum content when provided."
                 },
                 {
                     "role": "user",
@@ -774,7 +817,8 @@ def read_root():
             "NEW CBC lesson plan structure",
             "Subject-specific terminology",
             "Kiswahili lesson support",
-            "Fuzzy matching for typos"
+            "Fuzzy matching for typos",
+            "Space-to-underscore normalization"
         ],
         "supported_subjects": list(SUBJECT_TERMINOLOGY.keys())
     }
@@ -801,7 +845,8 @@ def health_check():
         "features": {
             "subject_terminology": "enabled",
             "kiswahili_support": "enabled",
-            "fuzzy_matching": "enabled"
+            "fuzzy_matching": "enabled",
+            "space_normalization": "enabled"
         },
         "supported_subjects": list(SUBJECT_TERMINOLOGY.keys()),
         "curriculum_files": curriculum_files
