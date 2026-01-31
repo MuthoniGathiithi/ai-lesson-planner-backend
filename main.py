@@ -39,13 +39,13 @@ app.add_middleware(
     expose_headers=["*"],
 )
 
-# Initialize OpenAI
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+# Initialize OpenAI   i have disabled it 
+#client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 
-@lru_cache(maxsize=1)
-def get_curriculum_files() -> List[str]:
-    return [f for f in os.listdir('.') if f.endswith('_curriculum.json')]
+#@lru_cache(maxsize=1)
+#def get_curriculum_files() -> List[str]:
+ #   return [f for f in os.listdir('.') if f.endswith('_curriculum.json')]
 
 
 @lru_cache(maxsize=128)
